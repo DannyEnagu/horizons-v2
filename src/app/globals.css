@@ -1,21 +1,42 @@
+@import url('../styles/theme.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+
+body {
+  font-family: 'Inter', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --radius: 0.5rem;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-between {
+    @apply flex justify-between items-center;
+  }
+
+  .flex-start {
+    @apply flex justify-start items-center;
+  }
+
+  .border-color {
+    @apply border-gray-200 dark:border-dark-400;
+  }
+}
+
+.active-theme {
+  filter: brightness(0) saturate(100%) invert(43%) sepia(26%) saturate(3802%) hue-rotate(78deg) brightness(96%) contrast(108%) !important;
+}
+
+.primary-color {
+  color: #14A800;
 }
