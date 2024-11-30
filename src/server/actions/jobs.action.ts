@@ -21,23 +21,23 @@ export const fetchCountries = async () => {
 
 
 export const fetchJobs = async (filters: JobFilterParams) => {
-    const { page, ...rest } = filters;
+    // const { page, ...rest } = filters;
     console.log(filters, 'searchParams');
 
-    const options = {
-        method: 'GET',
-        url: 'https://linkedin-jobs-api2.p.rapidapi.com/active-jb-7d',
-        params: {
-            ...rest,
-            limit: 10,
-            offset: page ? page * 10 : 0,
-            description_type: 'text'
-        },
-        headers: {
-            'x-rapidapi-key': process.env.NEXT_PUBLIC_RAPID_API_KEY ?? '',
-            'x-rapidapi-host': 'linkedin-job-search-api.p.rapidapi.com'
-        }
-    };
+    // const options = {
+    //     method: 'GET',
+    //     url: 'https://linkedin-jobs-api2.p.rapidapi.com/active-jb-7d',
+    //     params: {
+    //         ...rest,
+    //         limit: 10,
+    //         offset: page ? page * 10 : 0,
+    //         description_type: 'text'
+    //     },
+    //     headers: {
+    //         'x-rapidapi-key': process.env.NEXT_PUBLIC_RAPID_API_KEY ?? '',
+    //         'x-rapidapi-host': 'linkedin-job-search-api.p.rapidapi.com'
+    //     }
+    // };
       
     try {
         // const response = await axios.request(options);
