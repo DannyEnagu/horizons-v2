@@ -18,7 +18,7 @@ export default function DesktopMenu() {
     return (<NavigationMenu className="hidden md:block">
             <NavigationMenuList>
                 <NavigationMenuItem>
-                    <Link href="/jobs" legacyBehavior passHref>
+                    <Link href="/" legacyBehavior passHref>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                             Jobs
                         </NavigationMenuLink>

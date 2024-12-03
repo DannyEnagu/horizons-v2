@@ -36,7 +36,7 @@ export default function ThemeSwitch() {
                 />
             </Button>
         </PopoverTrigger>
-        <PopoverContent side="bottom" align="start" className="w-[200px] rounded border border-color bg-light-900 py-2 dark:border-dark-400 dark:bg-dark-300">
+        <PopoverContent side="bottom" align="start" className="w-[200px] py-2 rounded border border-color bg-light-900 dark:border-dark-400 dark:bg-dark-300">
             <h3 className="mb-2">Theme</h3>
             <ul>
                 {themes.map((theme) => (

@@ -1,13 +1,21 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import {withAuth} from "@kinde-oss/kinde-auth-nextjs/middleware";
+import { KindePermissions, KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
 
-export default clerkMiddleware({
-});
+export default withAuth(
+  async function middleware(req: { kindeAuth: { user: KindeUser; permissions: KindePermissions; }; }) {
+    console.log("Middleware", req.kindeAuth);
+  },
+  {
+    isReturnToCurrentPage: true,
+    // loginPage: "/login",
+    publicPaths: ["/", '/jobs', '/jobs/[id]'],
+    // isAuthorized: ({ token }) => {
+    //   // The user will be considered authorized if they have the permission 'eat:chips'
+    //   return token.permissions.includes("eat:chips");
+    // }
+  }
+);
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
+  matcher: ["/admin"]
 };

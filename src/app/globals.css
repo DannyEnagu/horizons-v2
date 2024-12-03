@@ -31,6 +31,11 @@ body {
   .border-color {
     @apply border-gray-200 dark:border-dark-400;
   }
+  .ring-color {
+    @apply ring-gray-200 dark:ring-dark-400;
+  }
+
+
 }
 
 .active-theme {
@@ -39,4 +44,9 @@ body {
 
 .primary-color {
   color: #14A800;
+}
+
+.profile-wrapper {
+  width: calc(100% - 3rem);
+  margin: 0 auto;
 }

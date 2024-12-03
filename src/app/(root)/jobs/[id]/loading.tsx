@@ -27,9 +27,9 @@ const Loading = () => {
       <Separator className="my-4" />
       <div className="pb-8 px-4">
           <h2 className="h2-bold text-dark100_light900 mb-8">Description</h2>
-          <p className="text-light400_light500">
+          <div className="text-light400_light500">
               <Skeleton className="h-[500px] w-full" />
-          </p>
+          </div>
       </div>
     </div>
     <div className="p-4">

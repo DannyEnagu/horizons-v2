@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SignedIn, SignedOut, SignOutButton } from '@clerk/nextjs';
+import {RegisterLink, LogoutLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -13,8 +13,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
+interface MobileMenuProps {
+  isUserAuthenticated: boolean;
+}
 
-export default function MobileMenu() {
+export default function MobileMenu({ isUserAuthenticated }: MobileMenuProps) {
+  
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -74,27 +78,28 @@ export default function MobileMenu() {
             </li>
         </ul>
         <SheetFooter className="block">
-          <SignedIn>
-              <SignOutButton>
-                <SheetClose className="w-full" asChild>
-                  <Button variant="destructive">Sign Out</Button>
-                </SheetClose>
-              </SignOutButton>
-          </SignedIn>
-          <SignedOut>
+          {/* If loggedIn */}
+          {isUserAuthenticated && (
+            <SheetClose className="w-full" asChild>
+              <Button variant="destructive">
+                <LogoutLink postLogoutRedirectURL="/">LogOut</LogoutLink>
+              </Button>
+            </SheetClose>
+          )}
+          {/* If not loggedIn */}
+          {!isUserAuthenticated && (
             <div className="flex flex-col gap-4">
                 <SheetClose className="w-full" asChild>
                   <Button variant="outline">
-                      <Link href="/login">Login</Link>
+                    <LoginLink postLoginRedirectURL="/">Login</LoginLink>
                   </Button>
                 </SheetClose>
                 <SheetClose className="w-full" asChild>
                   <Button variant="secondary">
-                      <Link href="/sign-up">Sign Up</Link>
+                    <RegisterLink postLoginRedirectURL="/">Sign Up</RegisterLink>
                   </Button>
                 </SheetClose>
-            </div>
-          </SignedOut>
+            </div>)}
         </SheetFooter>
       </SheetContent>
     </Sheet>

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter, Space_Grotesk } from 'next/font/google';
 import AppProvider from "@/context/AppProvider";
-import { ClerkProvider } from '@clerk/nextjs';
+// import { ClerkProvider } from '@clerk/nextjs';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,24 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} ${spaceGrotesk.variable} antialiased min-h-screen background-light850_dark100 text-dark-100 dark:text-light-900`}
-      >
-        <ClerkProvider
-          appearance={{
-            elements: {
-              formButtonPrimary: 'bg-[#14A800] text-slate-100 hover:bg-[#14A800]/80 !shadow-none',
-              footerActionLink:
-                'active-theme'
-            }
-          }}
+    <AppProvider>
+      <html lang="en">
+        <body
+          className={`${inter.variable} ${spaceGrotesk.variable} antialiased min-h-screen background-light850_dark100 text-dark-100 dark:text-light-900`}
         >
-          <AppProvider>
-            {children}
-          </AppProvider>
-        </ClerkProvider>
-      </body>
-    </html>
+          {children}
+        </body>
+      </html>
+    </AppProvider>
   );
 }

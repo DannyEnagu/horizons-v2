@@ -72,3 +72,10 @@ export const removeKeysFromQuery = ({
     { skipNull: true }
   );
 };
+
+export const parseHtmlString = (htmlString: string) => {
+  // Remove html tags and limit the string to 150 characters
+  const cleanString = htmlString.replace(/<[^>]+>/g, '');
+  // Remove 'Job Description:' from the string
+  return limitString(cleanString.replace('Job Description:', ''), 150);
+}
