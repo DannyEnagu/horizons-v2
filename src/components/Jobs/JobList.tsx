@@ -1,7 +1,6 @@
 
 // import Image from "next/image";
 import Link from "next/link";
-import { Job } from "@/types";
 import { ArrowUpRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
@@ -11,36 +10,37 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar";
+import { Job } from "@prisma/client";
 
 function JobCard({
     id,
     title,
     description,
     location,
-    employmentType=[],
-    postedAt,
-    companyLogo= '',
-    company
+    employmentTypes,
+    postedOn,
+    companyLogo,
+    companyName
 }: Job) {
     return (<Card className="bg-light-900 dark:bg-dark-300 border border-color p-0">
             <CardHeader className="border-b border-color p-0">
                 <CardTitle className="flex items-center gap-2 font-normal text-sm py-2 px-4">
                     <div className="flex items-center flex-wrap gap-2">
-                        {employmentType.length > 0 && <>
+                        {employmentTypes && <>
                             <span className="w-2 h-2 rounded-full background-light200_dark400" />
                             <span>
-                                {employmentType[0].replace('_', ' ')}
+                                {employmentTypes}
                             </span>
                         </>
                         }
                         <span>
-                            {location[0]}
+                            {location}
                         </span>
                         <span className="w-2 h-2 rounded-full background-light200_dark400" />
                         <span className="text-light400_light500 text-xs">
                             <span>Posted on: </span>
                             <span>
-                                {formatDateTime(postedAt)}
+                                {postedOn ? formatDateTime(postedOn.toString()) : 'N/A'}
                             </span>
                         </span>
                     </div>
@@ -53,14 +53,14 @@ function JobCard({
                 </CardTitle>
             </CardHeader>
             <CardContent className="flex items-center gap-8 p-4">
-                <div className="hidden rounded shadow dark:border dark:border-color sm:flex items-center justify-center w-[130px] h-[130px]">
+                <div className="hidden rounded shadow dark:border dark:border-color sm:flex items-center justify-center w-[100px] h-[100px]">
                     <Avatar className="h-full w-full">
                         <AvatarImage
-                            src={companyLogo}
+                            src={companyLogo || ''}
                             alt="Company Logo"
                         />
                         <AvatarFallback>
-                            {company.charAt(0) + company.charAt(1).toLocaleUpperCase()}
+                            {companyName.charAt(0) + companyName.charAt(1).toLocaleUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                 </div>

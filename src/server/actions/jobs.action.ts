@@ -1,9 +1,10 @@
-
-// import { JobFilterParams } from "@/types";
+"use server";
 import axios from 'axios';
-// import { jobs } from '../data'
 import { JobFilterParams } from '@/types';
 import { parseHtmlString } from '@/lib/utils';
+import { JobAPIResponse, SaveJobType } from '@/types/jobs';
+import prisma from '@/lib/prisma';
+import { Job } from '@prisma/client';
 
 export const fetchLocation = async () => {
     const response = await fetch('http://ip-api.com/json/?fields=country');
@@ -19,20 +20,6 @@ export const fetchCountries = async () => {
         console.log(error);
     }
 };
-
-type JobAPIResponse = {
-    [key: string]: string | number | string[] | object | object[];
-    refs: {
-        landing_page: string;
-    };
-    company: {
-        name: string;
-    };
-    locations: {
-        name: string;
-    }[];
-    employmentTypes: string[];
-}
 
 export const fetchJobs = async (filters: JobFilterParams) => {
     // const { page, ...rest } = filters;
@@ -63,24 +50,18 @@ export const fetchJobs = async (filters: JobFilterParams) => {
         // return response.data.map((job) => ({
         const jobs = results.map((job: JobAPIResponse) => ({
             id: job.id,
+            externalSourceID: job.id,
             title: job.name,
             type: job.type,
             description: parseHtmlString(job.contents as string),
-            location: job.locations.map(location => location.name),
-            categories: job.categories,
-            levels: job.levels,
-            // country: job.countries_derived,
-            // employmentType: job.employment_type,
-            company: job.company.name,
-            // companyLogo: job.organization_logo,
-            // createdAt: job.date_created,
-            postedAt: job.publication_date,
-            // companyUrl: job.organization_url,
-            // companyDescription: job.linkedin_org_description,
-            url: job.refs.landing_page,
-            // validUntil: job.date_validthrough,
-            // source: job.source,
-            tags: job.tags,
+            location: job.locations.map(location => location.name).join(', '),
+            categories: job.categories.map(category => category.name).join(', '),
+            level: job.levels.map(level => level.name).join(', '),
+            externalSourceUrl: job.refs.landing_page,
+            companyName: job.company.name,
+            employmentType: job.employmentTypes || [],
+            postedOn: job.publication_date,
+            validUntil: job.validUntil || '',
         }));
         return { jobList: jobs, page, page_count };
     } catch (error) {
@@ -89,7 +70,7 @@ export const fetchJobs = async (filters: JobFilterParams) => {
 };
     
 
-export const fetchJobDetails = async (id: string) => {
+export const fetchJobDetailsFromAPI = async (id: string) => {
     try {
         const options = {
             method: 'GET',
@@ -103,21 +84,198 @@ export const fetchJobDetails = async (id: string) => {
         const jobDetails: JobAPIResponse = response.data;
         return {
             id: jobDetails.id,
+            externalSourceID: jobDetails.id,
             title: jobDetails.name,
             type: jobDetails.type,
             description: jobDetails.contents,
-            location: jobDetails.locations.map(location => location.name),
-            categories: jobDetails.categories,
-            levels: jobDetails.levels,
-            company: jobDetails.company.name,
-            employmentTypes: jobDetails.employmentTypes || [],
-            companyUrl: jobDetails.refs.landing_page,
-            postedAt: jobDetails.publication_date,
-            url: jobDetails.refs.landing_page,
+            location: jobDetails.locations.map(location => location.name).join(', '),
+            categories: jobDetails.categories.map(category => category.name).join(', '),
+            level: jobDetails.levels.map(level => level.name).join(', '),
+            companyName: jobDetails.company.name,
+            employmentTypes: jobDetails.employmentTypes || '',
+            externalSourceUrl: jobDetails.refs.landing_page,
+            postedOn: jobDetails.publication_date,
             validUntil: jobDetails.validUntil || '',
-            tags: jobDetails.tags,
         };
     } catch (error) {
         console.error(error);
     }
 };
+
+export const fetchJobDetails = async (id: string) => {
+    try {
+        const job = await prisma.job.findFirst({
+            where: {
+                id
+            }
+        });
+        if (job) {
+            return {
+                message: 'Success',
+                isSuccessful: true,
+                result: job
+            };
+        }
+        const jobDetails = await fetchJobDetailsFromAPI(id);
+
+        return {
+            message: !jobDetails ? 'Job not found' : 'Success',
+            result: {...jobDetails}
+        };
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+}
+
+const createJob = async (job: Omit<Job, 'id'>) => {
+    try {
+        const newJob = await prisma.job.create({
+            data: {
+                ...job,
+            }
+        });
+        return newJob;
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+}
+
+const createTheMuseJob = async (job: Job) => {
+    try {
+        const newJob = await prisma.job.create({
+            data: {
+                ...job,
+            }
+        });
+        return newJob;
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+};
+
+
+const checkSavedJob = async (jobId: Job['id'], jobSeekerId: string) => {
+    const savedJob = await prisma.savedJob.findFirst({
+        where: {
+            jobId,
+            jobSeekerId,
+        }});
+    return savedJob;
+}
+
+const saveJobForUser = async (jobId: Job['id'], jobSeekerId: string) => {
+    const saved = await checkSavedJob(jobId, jobSeekerId);
+    if (!saved) {
+        const savedJob = await prisma.savedJob.create({
+            data: {
+                job: {
+                    connect: {
+                        id: jobId
+                    }
+                },
+                jobSeeker: {
+                    connect: {
+                        id: jobSeekerId
+                    }
+                }
+            }
+        });
+        return savedJob;
+    }
+    return;
+}
+
+// const unSaveJobForUser = async (jobId: Job['id'], userId: string) => {
+//     const savedJob = await prisma.savedJob.deleteMany({
+//         where: {
+//             jobId: jobId,
+//             jobSeekerId: userId
+//         }
+//     });
+//     return savedJob;
+// }
+
+export const saveJob = async ({job, userId}: SaveJobType) => {
+    try {
+        const { id, ...rest } = job;
+        const jobExists = await prisma.job.findFirst({
+            where: {
+                id: id,
+                OR: [
+                    { externalSourceID: rest?.externalSourceID },
+                ]
+            }
+        });
+        const jobSeekerExists = await prisma.jobSeeker.findFirst({
+            where: {
+                userId
+            }
+        });
+
+        console.log(jobExists, jobSeekerExists, 'Job and JobSeeker');
+        if (jobExists && jobSeekerExists) {
+            const saveJob = await saveJobForUser(jobExists.id, jobSeekerExists.id);
+            return {
+                message: saveJob ? 'Job saved successfully' : 'Job not saved Or already saved',
+                isSuccessful: !!saveJob,
+                result: saveJob || null
+            }
+        }
+        if (!jobExists && jobSeekerExists) {
+            const newJob = await createTheMuseJob(job);
+            const saveJob = await saveJobForUser(newJob.id, jobSeekerExists.id);
+            return {
+                message: saveJob ? 'Job saved successfully' : 'Job not saved Or already saved',
+                isSuccessful: !!saveJob,
+                result: saveJob || null
+            }
+        }
+
+        if(!jobSeekerExists && jobExists) {
+            const newJobSeeker = await prisma.jobSeeker.create({
+                data: {
+                    userId
+                }
+            });
+            const saveJob = await saveJobForUser(jobExists.id, newJobSeeker.id);
+            return {
+                message: saveJob ? 'Job saved successfully' : 'Job not saved Or already saved',
+                isSuccessful: !!saveJob,
+                result: saveJob || null
+            }
+        }
+
+        const newJob = await createTheMuseJob(job);
+        const newJobSeeker = await prisma.jobSeeker.create({
+            data: {
+                userId
+            }
+        });
+        const saveJob = await saveJobForUser(newJob.id, newJobSeeker.id);
+        return {
+            message: saveJob ? 'Job saved successfully' : 'Job not saved Or already saved',
+            isSuccessful: !!saveJob,
+            result: saveJob || null
+        }
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+}
+
+export const createNewJob = async (job: Job) => {
+    try {
+        const newJob = await createJob(job);
+        return {
+            message: newJob ?  'Job created successfully' : 'Job not created',
+            isSuccessful: !!newJob,
+            result: newJob || null
+        };
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+}

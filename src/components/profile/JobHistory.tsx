@@ -1,3 +1,4 @@
+
 import {
     Tabs,
     TabsContent,
@@ -5,6 +6,7 @@ import {
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { User } from "@prisma/client";
+import Application from "./Application";
 
 export default function JobHistory(user: User) {
     return (
@@ -18,11 +20,33 @@ export default function JobHistory(user: User) {
                         Saved Jobs
                     </TabsTrigger>
                 </TabsList>
-                <TabsContent value="applications" className="px-8 py-4">
-                    Applications Table
+                <TabsContent value="applications" className="py-4">
+                    <Application
+                        dateTime="Friday, 12th March 2021 12:00 PM"
+                        jobId="1"
+                        jobTitle="Visual Designer"
+                        status="Pending"
+                    />
+                    <Application
+                        dateTime="Friday, 12th March 2021 12:00 PM"
+                        jobId="1"
+                        jobTitle="Visual Designer"
+                        status="Pending"
+                    />
+                    <Application
+                        dateTime="Friday, 12th March 2021 12:00 PM"
+                        jobId="1"
+                        jobTitle="Visual Designer"
+                        status="Pending"
+                    />
                 </TabsContent>
-                <TabsContent value="saved" className="px-8 py-4">
-                    Saved Jobs Table
+                <TabsContent value="saved" className="py-4">
+                    <Application
+                        dateTime="Friday, 12th March 2021 12:00 PM"
+                        jobId="1"
+                        jobTitle="Frontend Developer"
+                        status="saved"
+                    />
                 </TabsContent>
             </Tabs>
         </div>

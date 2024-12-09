@@ -6,7 +6,7 @@ CREATE TYPE "ApplicationStatus" AS ENUM ('PENDING', 'INTERVIEWING', 'REJECTED', 
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "kindeId" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
     "avatar" TEXT,
@@ -20,48 +20,95 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Employer" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "companyName" TEXT NOT NULL,
     "website" TEXT,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "Employer_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "JobSeeker" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "headline" TEXT,
     "bio" TEXT,
     "skills" TEXT[],
-    "experience" TEXT,
-    "userId" INTEGER NOT NULL,
+    "location" TEXT,
+    "phone" TEXT,
+    "gender" TEXT,
+    "totalYearsExperience" INTEGER,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "JobSeeker_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
+CREATE TABLE "Experience" (
+    "id" TEXT NOT NULL,
+    "jobSeekerId" TEXT NOT NULL,
+    "designation" TEXT NOT NULL,
+    "term" TEXT NOT NULL,
+    "company" TEXT NOT NULL,
+    "summary" TEXT,
+    "jobType" TEXT,
+
+    CONSTRAINT "Experience_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "SocialProfile" (
+    "id" TEXT NOT NULL,
+    "jobSeekerId" TEXT NOT NULL,
+    "platform" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+
+    CONSTRAINT "SocialProfile_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Job" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "employerId" INTEGER NOT NULL,
+    "employerId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "externalSourceID" TEXT,
+    "companyName" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "location" TEXT NOT NULL,
+    "descriptionType" VARCHAR(5) NOT NULL,
+    "validUntil" TIMESTAMP(3),
+    "postedOn" TIMESTAMP(3),
+    "categories" TEXT,
+    "level" TEXT,
+    "externalSourceUrl" TEXT,
 
     CONSTRAINT "Job_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Application" (
-    "id" SERIAL NOT NULL,
-    "jobId" INTEGER NOT NULL,
-    "jobSeekerId" INTEGER NOT NULL,
+    "id" TEXT NOT NULL,
+    "jobId" TEXT NOT NULL,
+    "jobSeekerId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "status" "ApplicationStatus" NOT NULL DEFAULT 'PENDING',
 
     CONSTRAINT "Application_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "SavedJob" (
+    "id" TEXT NOT NULL,
+    "jobSeekerId" TEXT NOT NULL,
+    "jobId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "SavedJob_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -80,6 +127,12 @@ ALTER TABLE "Employer" ADD CONSTRAINT "Employer_userId_fkey" FOREIGN KEY ("userI
 ALTER TABLE "JobSeeker" ADD CONSTRAINT "JobSeeker_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Experience" ADD CONSTRAINT "Experience_jobSeekerId_fkey" FOREIGN KEY ("jobSeekerId") REFERENCES "JobSeeker"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SocialProfile" ADD CONSTRAINT "SocialProfile_jobSeekerId_fkey" FOREIGN KEY ("jobSeekerId") REFERENCES "JobSeeker"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Job" ADD CONSTRAINT "Job_employerId_fkey" FOREIGN KEY ("employerId") REFERENCES "Employer"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -87,3 +140,9 @@ ALTER TABLE "Application" ADD CONSTRAINT "Application_jobId_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "Application" ADD CONSTRAINT "Application_jobSeekerId_fkey" FOREIGN KEY ("jobSeekerId") REFERENCES "JobSeeker"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SavedJob" ADD CONSTRAINT "SavedJob_jobSeekerId_fkey" FOREIGN KEY ("jobSeekerId") REFERENCES "JobSeeker"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SavedJob" ADD CONSTRAINT "SavedJob_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Job"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

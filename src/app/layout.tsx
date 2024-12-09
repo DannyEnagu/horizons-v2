@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Inter, Space_Grotesk } from 'next/font/google';
 import AppProvider from "@/context/AppProvider";
-// import { ClerkProvider } from '@clerk/nextjs';
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,7 +31,10 @@ export default function RootLayout({
         <body
           className={`${inter.variable} ${spaceGrotesk.variable} antialiased min-h-screen background-light850_dark100 text-dark-100 dark:text-light-900`}
         >
-          {children}
+          <div>
+            {children}
+          </div>
+          <Toaster />
         </body>
       </html>
     </AppProvider>

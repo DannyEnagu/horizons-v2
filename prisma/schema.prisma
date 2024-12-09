@@ -1,15 +1,15 @@
-generator client {
-  provider = "prisma-client-js"
-}
+generator client {  
+  provider = "prisma-client-js"  
+}  
 
-datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
-}
+datasource db {  
+  provider = "postgresql"  
+  url = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")  
+}  
 
 model User {  
-  id        Int      @id @default(autoincrement())  
+  id        String   @id @default(cuid())  
   kindeId   String  
   fullName  String  
   avatar    String?  
@@ -28,41 +28,80 @@ enum Role {
 }  
 
 model Employer {  
-  id          Int      @id @default(autoincrement())  
+  id          String   @id @default(cuid()) 
   companyName String  
-  website     String?  
+  website     String?
+  companyLogo String?
   user        User     @relation(fields: [userId], references: [id])  
-  userId      Int      @unique  
+  userId      String      @unique  
   jobs        Job[]  
 }  
 
 model JobSeeker {  
-  id          Int      @id @default(autoincrement())  
+  id          String     @id @default(cuid())  
   headline    String?  
   bio         String?  
   skills      String[]  
-  experience  String? // Consider a more structured approach here (e.g., separate Experience model)  
+  location    String?  
+  phone       String?  
+  gender      String? 
+  totalYearsExperience Int?  
   user        User     @relation(fields: [userId], references: [id])  
-  userId      Int      @unique  
+  userId      String      @unique  
   applications Application[]  
+  savedJobs    SavedJob[]  
+  experiences  Experience[]  
+  socialProfiles SocialProfile[]  
 }  
 
-model Job {  
-  id          Int      @id @default(autoincrement())  
-  title       String  
-  description String  
-  employer    Employer @relation(fields: [employerId], references: [id])  
-  employerId  Int  
-  createdAt   DateTime @default(now())  
-  updatedAt   DateTime @updatedAt  
-  applications Application[]  
+model Experience {  
+  id          String    @id @default(cuid())  
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id])  
+  jobSeekerId String  
+  designation String  
+  term        String  
+  company     String  
+  summary     String?  
+  jobType     String?  
 }  
 
-model Application {  
-  id          Int      @id @default(autoincrement())  
-  jobId       Int  
+model SocialProfile {  
+  id          String    @id @default(cuid())  
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id])  
+  jobSeekerId String  
+  platform    String  
+  url         String  
+}
+
+model Job {
+  id              String     @id @default(cuid())  
+  title           String  
+  description     String  
+  employer        Employer   @relation(fields: [employerId], references: [id])  
+  employerId      String  
+  createdAt       DateTime   @default(now())  
+  updatedAt       DateTime   @updatedAt  
+  applications    Application[]  
+  savedJobs       SavedJob[]  
+  externalSourceID String?  
+  companyName     String
+  companyLogo     String?
+  type            String  
+  location        String
+  descriptionType String     @db.VarChar(5)  
+  validUntil      DateTime?
+  postedOn        DateTime?  
+  categories      String?  
+  level           String?   
+  externalSourceUrl String?
+  employmentTypes String?
+}
+
+model Application {
+  id          String  @id @default(cuid()) 
+  jobId       String  
   job         Job     @relation(fields: [jobId], references: [id])  
-  jobSeekerId Int  
+  jobSeekerId String  
   jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id])  
   createdAt   DateTime @default(now())  
   updatedAt   DateTime @updatedAt  
@@ -75,4 +114,14 @@ enum ApplicationStatus {
   REJECTED  
   OFFERED  
   HIRED  
+}  
+
+model SavedJob {  
+  id          String    @id @default(cuid())
+  jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id])  
+  jobSeekerId String  
+  job         Job     @relation(fields: [jobId], references: [id])  
+  jobId       String  
+  createdAt   DateTime @default(now())  
+  updatedAt   DateTime @updatedAt  
 }

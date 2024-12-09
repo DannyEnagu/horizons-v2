@@ -27,7 +27,7 @@ export async function getExistingUserOrCreateNewUser () {
         const isUserAuthenticated = await isAuthenticated();
 
         // Check if the user already exists on our database
-        const  existingUser = await getUsersByKindeId(kindeUser.id);
+        const  existingUser = await getUsersByKindeId(kindeUser?.id);
 
         // If the user already exists on our database,
         // return the user
