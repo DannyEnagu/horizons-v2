@@ -279,3 +279,63 @@ export const createNewJob = async (job: Job) => {
         throw error;
     }
 }
+
+export const getJobSeekerProfile = async (userId: string) => {
+    try {
+        // Include
+        // Saved Jobs and Job Applications
+        // experiences, socialProfiles
+        const jobSeeker = await prisma.jobSeeker.findFirst({
+            where: {
+                userId
+            },
+            include: {
+                experiences: {},
+                socialProfiles: {},
+                savedJobs: {
+                    include: {
+                        job: true
+                    }
+                },
+                applications: {
+                    include: {
+                        job: true
+                    }
+                },
+            }
+        });
+
+        if (!jobSeeker) {
+            return {
+                message: 'Job Seeker Profile Not Found',
+                isSuccessful: false,
+                result: null
+            };
+        }
+
+        const data = {
+            ...jobSeeker,
+            applications: jobSeeker.applications.map(application => ({
+                dateTime: application.createdAt.toString(),
+                jobId: application.jobId,
+                jobTitle: application.job.title,
+                status: application.status
+            })),
+            savedJobs: jobSeeker.savedJobs.map(savedJob => ({
+                dateTime: savedJob.createdAt.toString(),
+                jobId: savedJob.jobId,
+                jobTitle: savedJob.job.title,
+                status: 'Saved'
+            }))
+        };
+
+        return {
+            message: 'Success',
+            isSuccessful: true,
+            result: data
+        };
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+}

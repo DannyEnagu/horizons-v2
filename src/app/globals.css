@@ -50,3 +50,8 @@ body {
   width: calc(100% - 3rem);
   margin: 0 auto;
 }
+
+.sharp-border {
+  border-top-right-radius: 3rem;
+  border-bottom-right-radius: 3rem;
+}

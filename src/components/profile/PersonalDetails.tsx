@@ -1,29 +1,37 @@
-import { User } from "@prisma/client";
+import { JobSeeker, SocialProfile, User } from "@prisma/client";
 import UserAvatar from "../shared/UserAvatar";
-import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 
-export default function PersonalDetails(user: User) {
+interface PersonalDetailsProps {
+    user: User;
+    otherDetails: JobSeeker | undefined;
+    socialLinks: SocialProfile[] | undefined;
+};
+
+export default function PersonalDetails({
+    user,
+    otherDetails,
+    socialLinks
+}: PersonalDetailsProps) {
     return (
         <>
             <div className="flex flex-col sm:flex-row sm:items-center gap-8">
                 <UserAvatar
-                    name="John Doe"
-                    avatar="https://randomuser.me/api/portraits"
+                    name={user?.fullName}
+                    avatar={user?.avatar}
                     className="h-24 w-24 rounded-lg"
                 />
                 <div>
-                    <h2 className="text-xl font-semibold">John Doe</h2>
+                    <h2 className="text-xl font-semibold">
+                        {user?.fullName}
+                    </h2>
                     <p className="text-xs text-light400_light500 mb-1 mt-2">
-                        johndoe@gmil.com
+                        {user?.email || "N/A"}
                     </p>
                     <p className="text-sm text-light400_light500">
-                        Professional Title
+                        {otherDetails?.headline || "N/A"}
                     </p>
                 </div>
-                <Button variant="secondary" size="sm" className="self-start sm:ml-auto">
-                    Edit Profile
-                </Button>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-8">
                 <div className="space-y-[1px]">
@@ -32,7 +40,7 @@ export default function PersonalDetails(user: User) {
                             Location:
                         </strong>
                         <span className="ml-2 text-xs">
-                            City, Country
+                            {otherDetails?.location || "N/A"}
                         </span>
                     </p>
                     <p>
@@ -40,7 +48,7 @@ export default function PersonalDetails(user: User) {
                             Phone:
                         </strong>
                         <span className="ml-2 text-xs">
-                            +123456789
+                            {otherDetails?.phone || "N/A"}
                         </span>
                     </p>
                     <p>
@@ -48,7 +56,7 @@ export default function PersonalDetails(user: User) {
                             Gender:
                         </strong>
                         <span className="ml-2 text-xs">
-                            Male
+                            {otherDetails?.gender || "N/A"}
                         </span>
                     </p>
                     <p>
@@ -56,7 +64,18 @@ export default function PersonalDetails(user: User) {
                             Social:
                         </strong>
                         <span className="ml-2 text-xs">
-                            Facebook, Twitter, LinkedIn
+                            {socialLinks?.map((link) => (
+                                <a
+                                    key={link.id}
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-500"
+                                >
+                                    {link.platform}
+                                </a>
+                            ))}
+                            {socialLinks?.length === 0 && "N/A"}
                         </span>
                     </p>
                 </div>
@@ -64,10 +83,7 @@ export default function PersonalDetails(user: User) {
                 <div className="w-3/4">
                     <h3 className="text-lg font-semibold">About</h3>
                     <p className="text-light400_light500 mt-2 paragraph-semibold">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                        Nulla nec dui eget urna tincidunt aliquam.
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aperiam nulla laudantium voluptate blanditiis quaerat ipsa, explicabo, assumenda totam iure, quo ipsam quae adipisci. Atque doloribus, enim ad neque repellendus nam?
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam alias repellendus rerum expedita voluptates culpa distinctio delectus eaque fuga, officia quos suscipit velit praesentium fugiat dicta ipsum minima soluta ut?
+                        {otherDetails?.bio ? otherDetails.bio : "No about section yet."}
                     </p>
                 </div>
             </div>

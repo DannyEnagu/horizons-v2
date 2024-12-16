@@ -1,6 +1,9 @@
+'use server';
+
 import prisma from "@/lib/prisma";
 import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
 import { DeleteUserType, UpdateUserType } from "@/types/user";
+import { User } from "@prisma/client";
 
 
 export async function getUsersByKindeId (kindeId: string) {
@@ -52,7 +55,7 @@ export async function getExistingUserOrCreateNewUser () {
     }
 };
 
-export async function updateUser (userData: UpdateUserType) {
+export async function updateUser (userData: Partial<User>) {
     try {
         const user = await prisma.user.update({
             where: {
@@ -63,7 +66,11 @@ export async function updateUser (userData: UpdateUserType) {
             },
         });
 
-        return user;
+        return {
+            message: user ? "User updated successfully" : "Failed to update user",
+            isSuccessful: !!user,
+            result: user || null
+        };
     } catch (error) {
         console.error(`❌ ${error} ❌`);
         throw error;

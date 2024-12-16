@@ -14,3 +14,18 @@ export const JOB_TYPES = [
     'VOLUNTEER',
     'OTHER'
 ];
+
+export const SOCIAL_PLATFORMS = [
+    {
+        url: 'https://www.linkedin.com/in/',
+        label: 'linkedin'
+    },
+    {
+        url: 'https://www.facebook.com/',
+        label: 'facebook'
+    },
+    {
+        url: 'https://www.twitter.com/',
+        label: 'twitter'
+    }
+];

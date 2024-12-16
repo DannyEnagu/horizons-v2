@@ -35,12 +35,12 @@ export default function MobileMenu({ isUserAuthenticated }: MobileMenuProps) {
       <SheetHeader className="sr-only">
         <SheetTitle>Mobile Menu</SheetTitle>
         <SheetDescription>
-            Mobile menu dialog
+          Mobile menu dialog
         </SheetDescription>
       </SheetHeader>
       <SheetContent
         side="left"
-        className="background-light900_dark200 text-dark300_light900 border-none"
+        className="bg-light-900 dark:bg-dark-200 text-dark-300 dark:text-light-900 border-none"
       >
         <SheetClose asChild>
           <Link href="/">

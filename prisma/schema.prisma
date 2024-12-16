@@ -58,11 +58,12 @@ model Experience {
   id          String    @id @default(cuid())  
   jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id])  
   jobSeekerId String  
+  jobTitle    String
   designation String  
   term        String  
-  company     String  
+  company     String 
   summary     String?  
-  jobType     String?  
+  jobType     String?
 }  
 
 model SocialProfile {  
@@ -116,7 +117,7 @@ enum ApplicationStatus {
   HIRED  
 }  
 
-model SavedJob {  
+model SavedJob {
   id          String    @id @default(cuid())
   jobSeeker   JobSeeker @relation(fields: [jobSeekerId], references: [id])  
   jobSeekerId String  
