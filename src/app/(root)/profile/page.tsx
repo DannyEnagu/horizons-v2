@@ -33,10 +33,8 @@ export default async function ProfilePage() {
         return {
             platform: platform.label,
             url: platform.url,
-            username: link
-                ? link?.url
-                    .split("/")[link?.url.split("/").length - 1]
-                : "",
+            username: link?.url
+            .split("/")[link?.url.split("/").length - 1] || "",
         };
     });
     const userProps = {

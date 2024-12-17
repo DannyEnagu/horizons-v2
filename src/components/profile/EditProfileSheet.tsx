@@ -19,7 +19,8 @@ import EditWorkExperience, { WorkExperience } from "./EditWorkExperience";
 import EditPersonalDetails, { UserEditor } from "./EditPersonalDetails";
 import EditProfessionalDetails, { Profile } from "./EditProfessionalDetails";
 import { updateUser } from "@/server/actions/user.action";
-import { createSocialProfile, updateJobSeekerProfile, updateSocialProfile } from "@/server/actions/profile.action";
+import { createSocialProfile, updateJobSeekerProfile, updateSocialProfile, updateWorkExperience } from "@/server/actions/profile.action";
+import { useToast } from "@/hooks/use-toast";
 
 
 const tabs = [
@@ -43,6 +44,7 @@ export default function EditProfileSheet({
     experiences,
     totalYearsExperience,
 }: EditProfileSheetProps) {
+    const { toast } = useToast();
     const [activeTab, setActiveTab] = React.useState<ExplorationTab | null>(tabs[0]);
     const [isSaving, setIsSaving] = React.useState<boolean>(false);
     const [isDataChanged, setIsDataChanged] = React.useState<boolean>(false);
@@ -55,50 +57,145 @@ export default function EditProfileSheet({
         totalYearsExperience
     });
 
+    const resetChanges = () => {
+        setIsSaving(false);
+        setIsDataChanged(false);
+        setChanges({});
+    };
+
     const handleSubmit = async () => {
-        // setIsSaving(true);
+        setIsSaving(true);
         if (!changes || Object.keys(changes).length === 0) {
             setIsDataChanged(false);
+            setIsSaving(false);
             return;
         }
-        // Update the profile with the changes
         if (activeTab?.value === "personal") {
-            const userData = _.pick(changes.user, ['firstName', 'lastName', 'email', 'avatar']);
+            // Update the profile with the changes
+            const userNames = _.pick(changes.user, ['firstName', 'lastName']);
+            const  otherDetails = _.pick(changes.user, [ 'email', 'avatar'])
+
+            const userData = Object.keys(userNames).length > 0
+                ?   {
+                        fullName: `${userNames?.firstName} ${userNames?.lastName}`,
+                        ...otherDetails
+                    }
+                : { ...otherDetails };
+
             // Update the user profile
-            const res = await updateUser(
-                {
-                    id: userId,
-                    fullName: `${userData?.firstName} ${userData?.lastName}`,
-                    ...userData
-                }
-            );
+            const res =  Object.keys(userData).length > 0 &&
+                await updateUser(
+                    {
+                        id: userId,
+                        ...userData
+                    }
+                );
+
 
             const jobSeekerData = _.pick(changes.user, ['phone','location', 'gender']);
 
             // Update the job seeker profile
-            const jobSeekerRes = await updateJobSeekerProfile({
-                userId,
-                ...jobSeekerData
-            });
+            const jobSeekerRes = Object.keys(jobSeekerData).length > 0 &&
+                await updateJobSeekerProfile({
+                    userId,
+                    ...jobSeekerData
+                });
 
             const socials = changes.user?.socials;
-            const withJobSeeker = socials?.map((social) => ({
-                jobSeekerId: profile?.jobSeekerId as string,
+            const socialsMedias = socials?.filter((social) => social.username).map((social) => ({
                 platform: social.platform,
-                url: social.url
+                url: social.url + social.username
             }));
-            if (user?.socials?.length && socials) {
+
+            // Verify if user has all social profiles
+            const isAllSocials = user?.socials?.every((social) => social.username);
+
+            if (user?.socials
+                && isAllSocials
+                && socials) {
                 // Update social profiles
-                if (withJobSeeker) 
-                    await updateSocialProfile(withJobSeeker);
+                if (socialsMedias && socialsMedias.length > 0) {
+                    const res = await updateSocialProfile({
+                        data: socialsMedias,
+                        jobSeekerId: profile?.jobSeekerId as string
+                    });
+                    toast({
+                        variant: res.isSuccessful ?  "success" : "destructive",
+                        description: res.message,
+                    });
+                    resetChanges();
+                    return;
+                }
             } else {
                 // Create social profiles
-                if (withJobSeeker) {
-                    await createSocialProfile(withJobSeeker);
+                if (socialsMedias && socialsMedias.length > 0) {
+                    const res = await createSocialProfile({
+                         data: socialsMedias,
+                         jobSeekerId: profile?.jobSeekerId as string
+                     });
+
+                    toast({
+                        variant: res.isSuccessful ?  "success" : "destructive",
+                        description: res.message,
+                    });
+                    resetChanges();
+                    return;
                 }
+
             }
+
+            if (res || jobSeekerRes) {
+                toast({
+                    variant: (res && res.isSuccessful) || (jobSeekerRes && jobSeekerRes.isSuccessful) ?  "success" : "destructive",
+                    description: 'Profile updated successfully',
+                });
+            } else {
+                toast({
+                    variant: "destructive",
+                    description: "Failed to update user profile as some data is missing",
+                });
+            }
+
+            resetChanges();
         } else if (activeTab?.value === "professional") {
+            // Update the profile with the changes
+            const profileData = _.pick(changes.profile, ['headline', 'bio', 'skills']);
+            // Update the profile
+            const res = await updateJobSeekerProfile({
+                userId,
+                ...profileData
+            });
+
+            toast({
+                variant: res.isSuccessful ?  "success" : "destructive",
+                description: res.message,
+            });
+            resetChanges();
+        } else if (activeTab?.value === "experience") {
+            // Update the experiences with the changes
+            const totalYears = changes.totalYearsExperience;
+            if (totalYears) {
+                const res = await updateJobSeekerProfile({
+                    userId,
+                    totalYearsExperience: totalYears
+                });
+                toast({
+                    variant: res.isSuccessful ?  "success" : "destructive",
+                    description: res.message,
+                });
+            }
+            const experienceData = changes.experiences;
+            // Update the experiences
+            if (experienceData) {
+                const res = await updateWorkExperience(experienceData, userId);
+                toast({
+                    variant: res.isSuccessful ?  "success" : "destructive",
+                    description: res.message,
+                });
+            }
+            resetChanges();
         }
+
     }
 
     const handleDataChange = (formData: Partial<EditProfileSheetProps>) => {
@@ -108,6 +205,14 @@ export default function EditProfileSheet({
         Object.keys(formData).forEach((key) => {
             const dataKey = key as keyof typeof data;
             const formKey = key as keyof typeof formData;
+
+            if (!_.isEqual(data[dataKey], formData[formKey]) && typeof formData[formKey] !== 'object') {
+                setChanges({
+                    ...changes,
+                    [dataKey]: formData[formKey]
+                });
+                setIsDataChanged(true);
+            }
             Object.keys(formData[formKey] || {}).forEach((subKey) => {
                 const subDataKey = subKey as keyof typeof data[typeof dataKey];
                 const subFormKey = subKey as keyof typeof formData[typeof formKey];

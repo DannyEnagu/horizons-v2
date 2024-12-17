@@ -18,7 +18,7 @@ export default function ProfessionalDetails(
                                 {item?.designation}
                             </strong>
                             <span className="text-light400_light500 text-sm">
-                                {item?.summary}
+                                {item?.company}
                             </span>
                         </p>
                         <p className="flex flex-col gap-4">

@@ -29,7 +29,7 @@ export default function PersonalDetails({
                         {user?.email || "N/A"}
                     </p>
                     <p className="text-sm text-light400_light500">
-                        {otherDetails?.headline || "N/A"}
+                        {otherDetails?.headline}
                     </p>
                 </div>
             </div>
@@ -63,14 +63,14 @@ export default function PersonalDetails({
                         <strong className="text-light400_light500 text-sm">
                             Social:
                         </strong>
-                        <span className="ml-2 text-xs">
+                        <span className="ml-2 text-xs space-x-3">
                             {socialLinks?.map((link) => (
                                 <a
                                     key={link.id}
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-blue-500"
+                                    className="text-blue-500 capitalize"
                                 >
                                     {link.platform}
                                 </a>

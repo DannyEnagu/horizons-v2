@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
-import { DeleteUserType, UpdateUserType } from "@/types/user";
+import { DeleteUserType } from "@/types/user";
 import { User } from "@prisma/client";
 
 

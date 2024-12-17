@@ -104,13 +104,16 @@ export default function EditPersonalDetails({
                 ...updatedSocials[index],
                 platform: updatedSocials[index].platform,
                 username: username,
-                url: updatedSocials[index].url + username
+                url: updatedSocials[index].url
             };
             setData({
                 ...data,
                 socials: updatedSocials,
             });
-            handleCallback();
+            submit({
+                ...data,
+                socials: updatedSocials,
+            });
         }
     }
 
@@ -218,6 +221,7 @@ export default function EditPersonalDetails({
                             key={social.platform}
                             prefix={social.url}
                             placeholder="username"
+                            defaultValue={social.username}
                             id={social.platform}
                             name={social.platform}
                             onBlur={handleSocialsChange}

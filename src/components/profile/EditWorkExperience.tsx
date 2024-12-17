@@ -10,7 +10,7 @@ import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import InputWrapper from "./InputWrapper";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { createWorkExperience, updateJobSeekerProfile } from "@/server/actions/profile.action";
+import { createWorkExperience } from "@/server/actions/profile.action";
 import { revalidatePath } from "next/cache";
 
 export interface WorkExperience {
@@ -19,6 +19,7 @@ export interface WorkExperience {
     jobType: string;
     term: string;
     summary: string;
+    id: string;
 }
 
 type TotalYearsExperience = number | null | undefined;
@@ -38,29 +39,24 @@ export default function EditWorkExperience(
     { experiences, submit, totalYearsExperience, userId}: EditWorkExperienceProps
 ) {
     const [isSaving, setIsSaving] = React.useState(false);
-    const [selectedExperience, setSelectedExperience] = React.useState<WorkExperience | null>(experiences[0]);
     const { toast } = useToast();
+    const [totalYears, setTotalYears] = React.useState(totalYearsExperience || undefined);
+    const [showForm, setShowForm] = React.useState(experiences.length === 0);
 
-    const [works, setWorks] = React.useState<WorkExperience[]>([]);
-
-    const [data, setData] = React.useState({
-        company: experiences[0]?.company || '',
-        designation: experiences[0]?.designation || '',
-        term: experiences[0]?.term || '',
-        summary: experiences[0]?.summary || '',
-        totalYears: totalYearsExperience || 0,
-        jobType: experiences[0]?.jobType || '',
+    const [data, setData] = React.useState<WorkExperience>({
+        company: '',
+        designation: '',
+        term: '',
+        summary: '',
+        jobType: '',
+        id: '',
     });
 
-    React.useEffect(() => {
-        setSelectedExperience(works[0] || null);
-    }, [works]);
-
-    // const handleSelectExperience = (experience: WorkExperience) => {
-    //     setSelectedExperience(experience);
-    // }
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (e.target.name === 'totalYears') {
+            setTotalYears(e.target.value ? parseInt(e.target.value) : undefined);
+            return;
+        }
         setData({
             ...data,
             [e.target.name]:  e.target.value,
@@ -76,29 +72,26 @@ export default function EditWorkExperience(
         exps.push({...data, jobType: value});
         submit({
             experiences: exps,
-            totalYearsExperience: data.totalYears,
+            totalYearsExperience: totalYears,
         });
     }
 
     const handleCallback = () => {
-        if (works.length > 0) {
-            submit({
-                experiences: works,
-                totalYearsExperience: data.totalYears,
-            });
+        if (data.id === '' && showForm) {
             return;
         }
+        console.log(data, showForm);
         const exps = [];
         exps.push(data);
         submit({
             experiences: exps,
-            totalYearsExperience: data.totalYears,
+            totalYearsExperience: totalYears,
         });
     }
 
     const addExperience = async () => {
         setIsSaving(true);
-        setWorks(prev => [...prev, {...data}])
+        
         const res = await createWorkExperience({
             company: data.company,
             designation: data.designation,
@@ -107,11 +100,6 @@ export default function EditWorkExperience(
             jobType: data.jobType,
             jobTitle: data.designation,
         }, userId);
-
-        await updateJobSeekerProfile({
-            userId,
-            totalYearsExperience: data.totalYears,
-        })
 
         if (res.isSuccessful) {
             setIsSaving(false);
@@ -136,160 +124,197 @@ export default function EditWorkExperience(
             designation: '',
             term: '',
             summary: '',
-            totalYears: 0,
             jobType: '',
+            id: ''
         });
+        setTotalYears(0);
+    }
+
+    const handleMenuSelect = (item: string, id: string) => {
+        setShowForm(true);
+        if (item !== 'Edit') {
+            clearData();
+            return;
+        }
+        const exp = experiences.find((work) => work.id === id);
+        if (exp) {
+            setData(exp);
+            return;
+        }
     }
 
     return (
         <div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4 mb-8">
-                {works.length > 0 && (
-                <>
-                    <div className="flex w-full flex-col items-start justify-between rounded-md border py-1 px-3 sm:flex-row sm:items-center">
+            <div className="space-y-2 mb-8">
+                {experiences.map((experience) => (
+                    <div key={experience.id} className="flex w-full flex-col items-start justify-between rounded-md border py-1 px-3 sm:flex-row sm:items-center">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-8 text-sm font-medium leading-none">
                             <span className="underline">
-                                {selectedExperience?.designation}
+                                {experience?.designation}
                             </span>
                             <span>
                                 @ <strong>
-                                    {selectedExperience?.company}
+                                    {experience?.company}
                                 </strong>
                             </span>
                             <Badge className="rounded-lg text-center self-start">
-                                {selectedExperience?.term}
+                                {experience?.term}
                             </Badge>
                         </div>
                         <ComboboxDropdownMenu
-                            itemId="experience"
-                            label="Add Experience"
-                            showLabels
-                            setLabel={() => {}}
-                            onDelete={() => {}}
+                            itemId={experience?.id || ''}
+                            label="Select Experience"
+                            menuItems={[
+                                'Edit',
+                                'New',
+                            ]}
+                            onDelete={(id) => {
+                                console.log(id, 'deleted');
+                            }}
+                            onSelectMenuItem={(item) => handleMenuSelect(item, experience.id)}
                         />
                     </div>
-                </>)}
-                <Button
-                    variant="secondary"
-                    size="sm"
-                    disabled={!data.company
-                        || !data.designation
-                        || !data.term
-                        || !data.summary
-                        || !data.totalYears
-                        || !data.jobType
-                    }
-                    onClick={() => addExperience()}
-                >
-                    {isSaving ? <Loader /> : 'Add Experience'}
-                </Button>
+                ))}
             </div>
             <div className="space-y-4">
-                <InputWrapper label="Company Name" labelFor="company">
-                    <Input
-                        type="text"
-                        id="company"
-                        placeholder="Company Name"
-                        name="company"
-                        value={data.company}
-                        onChange={handleChange}
-                        onBlur={handleCallback}
-                    />
-                </InputWrapper>
-                <InputWrapper label="Job Title" labelFor="jobTitle">
-                    <Input
-                        type="text"
-                        id="jobTitle"
-                        placeholder="Job Title"
-                        name="designation"
-                        value={data.designation}
-                        onChange={handleChange}
-                        onBlur={handleCallback}
-                    />
-                </InputWrapper>
-                <InputWrapper
-                    label="Employment type"
-                    labelFor="jobType"
-                    optionalText="Specify the type of employment (e.g. Full-time, Part-time)"
-                >
-                    <Select onValueChange={handleSelectChange}>
-                        <SelectTrigger>
-                            <SelectValue
-                                placeholder="Previous Employment Type"
+                {
+                    !showForm && (
+                        <InputWrapper label="Total Years of Experience" labelFor="experience">
+                            <Input
+                                type="number"
+                                id="experience"
+                                placeholder="Total years of experience"
+                                name="totalYears"
+                                value={totalYears}
+                                onChange={handleChange}
+                                onBlur={handleCallback}
                             />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {[
-                            'Full-time',
-                            'Part-time',
-                            'Hybrid',
-                            'Contract',
-                            'Internship',
-                            'Freelance',
-                            'Temporary',
-                            'flexible/remote',
-                            'Volunteer',
-                            'Apprenticeship',
-                            'Seasonal',
-                            'Trainee',
-                            'Others'
-                            ].map((type) => (
-                                <SelectItem
-                                    key={type}
-                                    value={type}
-                                >
-                                    {type}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </InputWrapper>
-                <InputWrapper
-                    label="Term"
-                    labelFor="term"
-                    optionalText="Specify the duration of your employment (e.g. March, 2019 - Present)"
-                >
-                    <Input
-                        type="text"
-                        id="term"
-                        placeholder="from - to"
-                        name="term"
-                        value={data.term}
-                        onChange={handleChange}
-                        onBlur={handleCallback}
-                    />
-                </InputWrapper>
-                <InputWrapper
-                    label="Summary"
-                    labelFor="summary"
-                    optionalText="Summarize your role in this position."
-                >
-                    <div>
-                        <Textarea
-                            id="summary"
-                            placeholder="Summary of your role."
-                            name="summary"
-                            value={data.summary}
-                            onChange={handleChange}
-                            onBlur={handleCallback}
-                        />
-                        <span className="text-muted text-xs">
-                            {`${data.summary.length}/500 characters remaining`}
-                        </span>
-                    </div>
-                </InputWrapper>
-                <InputWrapper label="Total Years of Experience" labelFor="experience">
-                    <Input
-                        type="number"
-                        id="experience"
-                        placeholder="Total years of experience"
-                        name="totalYears"
-                        value={data?.totalYears}
-                        onChange={handleChange}
-                        onBlur={handleCallback}
-                    />
-                </InputWrapper>
+                        </InputWrapper>
+                    )
+                }
+                {showForm &&
+                    <>
+                        <InputWrapper label="Company Name" labelFor="company">
+                            <Input
+                                type="text"
+                                id="company"
+                                placeholder="Company Name"
+                                name="company"
+                                value={data.company}
+                                onChange={handleChange}
+                                onBlur={handleCallback}
+                            />
+                        </InputWrapper>
+                        <InputWrapper label="Job Title" labelFor="jobTitle">
+                            <Input
+                                type="text"
+                                id="jobTitle"
+                                placeholder="Job Title"
+                                name="designation"
+                                value={data.designation}
+                                onChange={handleChange}
+                                onBlur={handleCallback}
+                            />
+                        </InputWrapper>
+                        <InputWrapper
+                            label="Employment type"
+                            labelFor="jobType"
+                            optionalText="Specify the type of employment (e.g. Full-time, Part-time)"
+                        >
+                            <Select onValueChange={handleSelectChange}>
+                                <SelectTrigger>
+                                    <SelectValue
+                                        placeholder="Previous Employment Type"
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {[
+                                    'Full-time',
+                                    'Part-time',
+                                    'Hybrid',
+                                    'Contract',
+                                    'Internship',
+                                    'Freelance',
+                                    'Temporary',
+                                    'flexible/remote',
+                                    'Volunteer',
+                                    'Apprenticeship',
+                                    'Seasonal',
+                                    'Trainee',
+                                    'Others'
+                                    ].map((type) => (
+                                        <SelectItem
+                                            key={type}
+                                            value={type}
+                                        >
+                                            {type}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </InputWrapper>
+                        <InputWrapper
+                            label="Term"
+                            labelFor="term"
+                            optionalText="Specify the duration of your employment (e.g. March, 2019 - Present)"
+                        >
+                            <Input
+                                type="text"
+                                id="term"
+                                placeholder="from - to"
+                                name="term"
+                                value={data.term}
+                                onChange={handleChange}
+                                onBlur={handleCallback}
+                            />
+                        </InputWrapper>
+                        <InputWrapper
+                            label="Summary"
+                            labelFor="summary"
+                            optionalText="Summarize your role in this position."
+                        >
+                            <div>
+                                <Textarea
+                                    id="summary"
+                                    placeholder="Summary of your role."
+                                    name="summary"
+                                    value={data.summary}
+                                    onChange={handleChange}
+                                    onBlur={handleCallback}
+                                />
+                                <span className="text-muted text-xs">
+                                    {`${data.summary.length}/500 characters remaining`}
+                                </span>
+                            </div>
+                        </InputWrapper>
+                    </>
+                }
             </div>
+            {(data.id === '' && showForm) && (
+                <div className="flex items-center justify-end gap-4 mt-8">
+                    <Button
+                        onClick={clearData}
+                    >
+                        Clear
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        onClick={addExperience}
+                        disabled={isSaving
+                            || !data.company
+                            || !data.designation
+                            || !data.term
+                            || !data.summary
+                        }
+                    >
+                        {isSaving ? (
+                            <Loader size={20} />
+                        ) : (
+                            "Add Experience"
+                        )}
+                    </Button>
+                </div>
+            )}
         </div>
     );
 }

@@ -16,6 +16,13 @@ export interface ApplicationProps {
   display?: 'applications' | 'saved';
 }
 
+const labels = [
+  'Pending',
+  'Interviewing',
+  'Rejected',
+  'Offered',
+  'Hired',
+]
 
 export default function Application({ dateTime, jobId, status, jobTitle, display='applications' }: ApplicationProps) {
   const formatDateTime = (dateTime: string) => {
@@ -39,6 +46,7 @@ export default function Application({ dateTime, jobId, status, jobTitle, display
         <ComboboxDropdownMenu
           itemId={jobId}
           label={status}
+          labels={labels}
           showLabels={display === 'applications'}
           setLabel={() => {}}
           onDelete={() => {}}

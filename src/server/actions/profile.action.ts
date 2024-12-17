@@ -15,26 +15,21 @@ export const createJobSeekerProfile = async (data: Omit<JobSeeker, 'id'>) => {
         if (!jobSeekerExists) {
             const newJobSeeker = await prisma.jobSeeker.create({
                 data: {
-                    ...data
+                    userId: data.userId
                 }
             });
+    
             return {
                 message: newJobSeeker ? "Job Seeker Profile created successfully" : "Failed to create Job Seeker Profile",
                 isSuccessful: !!newJobSeeker,
                 result: newJobSeeker || null
             };
         }
-
-        const newJobSeeker = await prisma.jobSeeker.create({
-            data: {
-                ...data
-            }
-        });
-
+        
         return {
-            message: newJobSeeker ? "Job Seeker Profile created successfully" : "Failed to create Job Seeker Profile",
-            isSuccessful: !!newJobSeeker,
-            result: newJobSeeker || null
+            message: jobSeekerExists ? "Job Seeker Profile created successfully" : "Failed to create Job Seeker Profile",
+            isSuccessful: !!jobSeekerExists,
+            result: jobSeekerExists || null
         };
     } catch (error) {
         console.error(`❌ ${error} ❌`);
@@ -42,19 +37,18 @@ export const createJobSeekerProfile = async (data: Omit<JobSeeker, 'id'>) => {
     }
 }
 
-type JobSeekerUpdateType = {
-    userId: string;
-    headline?: string | null;
-    bio?: string | null;
-    skills?: string[];
-    location?: string | null;
-    phone?: string | null;
-    gender?: string | null;
-    totalYearsExperience?: number | null;
-}
-
-export const updateJobSeekerProfile = async (data: JobSeekerUpdateType) => {
+export const updateJobSeekerProfile = async (data: Partial<JobSeeker>) => {
     try {
+        const existingJobSeeker = await createJobSeekerProfile(data as Omit<JobSeeker, 'id'>);
+
+        if (!existingJobSeeker.isSuccessful) {
+            return {
+                message: "Failed to update Profile",
+                isSuccessful: false,
+                result: null
+            };
+        }
+
         const jobSeeker = await prisma.jobSeeker.update({
             where: {
                 userId: data.userId
@@ -65,7 +59,7 @@ export const updateJobSeekerProfile = async (data: JobSeekerUpdateType) => {
         });
 
         return {
-            message: jobSeeker ? "Job Profile updated successfully" : "Failed to update Profile",
+            message: jobSeeker ? "Profile updated successfully" : "Failed to update Profile",
             isSuccessful: !!jobSeeker,
             result: jobSeeker || null
         };
@@ -78,6 +72,22 @@ export const updateJobSeekerProfile = async (data: JobSeekerUpdateType) => {
 
 export const createWorkExperience = async (experiences: Omit<Experience, 'id' | 'jobSeekerId'>, userId: string) => {
     try {
+
+        const existingExperience = await prisma.experience.findFirst({
+            where: {
+                company: experiences.company,
+                term: experiences.term
+            }
+        });
+
+        if (existingExperience) {
+            return {
+                message: "Work Experience already exists",
+                isSuccessful: false,
+                result: existingExperience
+            };
+        }
+
         const jobSeeker = await prisma.jobSeeker.findUnique({
             where: {
                 userId
@@ -103,6 +113,7 @@ export const createWorkExperience = async (experiences: Omit<Experience, 'id' | 
                 result: newExperience || null
             };
         }
+
         const newExperience = await prisma.experience.create({
             data: {
                 ...experiences,
@@ -120,12 +131,82 @@ export const createWorkExperience = async (experiences: Omit<Experience, 'id' | 
     }
 }
 
-export const createSocialProfile = async (data: Omit<SocialProfile, 'id'>[]) => {
+export const updateWorkExperience = async (experiences: Partial<Experience>[], userId: string) => {
+    try {
+        const jobSeeker = await prisma.jobSeeker.findUnique({
+            where: {
+                userId
+            }
+        });
+
+        if (!jobSeeker) {
+            const newJobSeeker = await prisma.jobSeeker.create({
+                data: {
+                    userId
+                }
+            });
+
+            experiences.forEach(async item => {
+                await prisma.experience.updateMany({
+                    where: {
+                        jobSeekerId: newJobSeeker.id
+                    },
+                    data: {
+                        ...item
+                    }
+                });
+            });
+
+            const experience = await prisma.experience.findMany({
+                where: {
+                    jobSeekerId: newJobSeeker.id
+                }
+            });
+
+            return {
+                message: experience ? "Work Experience updated successfully" : "Failed to update Work Experience",
+                isSuccessful: !!experience,
+                result: experience || null
+            };
+        }
+
+        experiences.forEach(async item => {
+            await prisma.experience.updateMany({
+                where: {
+                    jobSeekerId: jobSeeker?.id
+                },
+                data: {
+                    ...item
+                }
+            });
+        });
+
+        const experience = await prisma.experience.findMany({
+            where: {
+                jobSeekerId: jobSeeker?.id
+            }
+        });
+
+        return {
+            message: experience ? "Work Experience updated successfully" : "Failed to update Work Experience",
+            isSuccessful: !!experience,
+            result: experience || null
+        };
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+}
+
+export const createSocialProfile = async (
+    { data, jobSeekerId }: { data: Omit<SocialProfile, 'id' | 'jobSeekerId'>[], jobSeekerId: string }
+) => {
     try {
         const socialProfile = await prisma.socialProfile.createMany({
-            data: {
-                ...data
-            }
+            data: data.map(item => ({
+                ...item,
+                jobSeekerId
+            }))
         });
 
         return {
@@ -139,20 +220,24 @@ export const createSocialProfile = async (data: Omit<SocialProfile, 'id'>[]) => 
     }
 }
 
-type SocialProfileUpdateType = {
-    jobSeekerId?: string;
-    platform?: string;
-    url?: string;
-}
-
-export const updateSocialProfile = async (data: SocialProfileUpdateType[]) => {
+export const updateSocialProfile = async ({ data, jobSeekerId}: { data: Partial<SocialProfile>[], jobSeekerId: string}) => {
     try {
-        const socialProfile = await prisma.socialProfile.updateMany({
+
+        data.forEach(async item => {
+            await prisma.socialProfile.updateMany({
+                where: {
+                    jobSeekerId,
+                    platform: item.platform
+                },
+                data: {
+                    ...item
+                }
+            });
+        });
+
+        const socialProfile = await prisma.socialProfile.findMany({
             where: {
-                id: data[0].platform
-            },
-            data: {
-                ...data
+                jobSeekerId
             }
         });
 

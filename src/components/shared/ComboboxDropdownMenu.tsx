@@ -25,26 +25,37 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const labels = [
-    'Pending',
-    'Interviewing',
-    'Rejected',
-    'Offered',
-    'Hired',
-]
-
 interface ComboboxDropdownMenuProps {
     itemId: string;
     label: string;
     showLabels?: boolean;
-    setLabel: (label: string) => void;
+    labels?: string[];
+    menuItems?: string[];
+    onSelectMenuItem?: (item: string) => void;
+    setLabel?: (label: string) => void;
     onDelete: (id: string) => void;
 }
 
 export function ComboboxDropdownMenu(
-    { itemId, setLabel, showLabels, onDelete, label }: ComboboxDropdownMenuProps
+    {
+        itemId,
+        setLabel,
+        showLabels,
+        onDelete,
+        label,
+        labels,
+        menuItems,
+        onSelectMenuItem,
+    }: ComboboxDropdownMenuProps
 ) {
       const [open, setOpen] = React.useState(false)
+
+        const handleMenuItemClick = (item: string) => {
+            if (onSelectMenuItem) {
+                onSelectMenuItem(item)
+            }
+            setOpen(false)
+        }
     
       return (
         <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -56,6 +67,13 @@ export function ComboboxDropdownMenu(
             <DropdownMenuContent align="end" className="w-[200px]">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuGroup>
+                    {menuItems?.map((item) => (
+                        <DropdownMenuItem key={item}
+                            onClick={() => handleMenuItemClick(item)}
+                        >
+                            {item}
+                        </DropdownMenuItem>
+                    ))}
                     <DropdownMenuSub>
                         {showLabels && (
                             <DropdownMenuSubTrigger>
@@ -72,13 +90,15 @@ export function ComboboxDropdownMenu(
                             <CommandList>
                             <CommandEmpty>No label found.</CommandEmpty>
                             <CommandGroup>
-                                {labels.map((label) => (
+                                {labels?.map((label) => (
                                 <CommandItem
                                     key={label}
                                     value={label}
                                     onSelect={(value) => {
-                                    setLabel(value)
-                                    setOpen(false)
+                                        if (setLabel) {
+                                            setLabel(value)
+                                        }
+                                        setOpen(false)
                                     }}
                                 >
                                     {label}
