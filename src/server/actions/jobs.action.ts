@@ -13,28 +13,21 @@ export const fetchLocation = async () => {
   
 export const fetchCountries = async () => {
     try {
-        // const response = await fetch('https://restcountries.com/v3.1/all'); // This API is not working at the moment
-        const response = await fetch('https://restcountries.com/v3.1/region/africa');
+        const response = await fetch('https://restcountries.com/v2/all');
         return await response.json();
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };
 
 export const fetchJobs = async (filters: JobFilterParams) => {
-    // const { page, ...rest } = filters;
-    console.log(filters, 'searchParams');
+
 
     const options = {
         method: 'GET',
         url: 'https://www.themuse.com/api/public/jobs',
-        // url: 'https://linkedin-jobs-api2.p.rapidapi.com/active-jb-7d',
         params: {
-            page: 1,
-            // ...rest,
-            // limit: 10,
-            // offset: page ? page * 10 : 0,
-            // description_type: 'text'
+            ...filters,
         },
         headers: {
             'api_key': process.env.THE_MUSE_API_KEY ?? '',
@@ -43,11 +36,8 @@ export const fetchJobs = async (filters: JobFilterParams) => {
       
     try {
         const response = await axios.request(options);
-
-        console.log(response.data, 'New Api Data');
         const { results, page, page_count } = response.data;
 
-        // return response.data.map((job) => ({
         const jobs = results.map((job: JobAPIResponse) => ({
             id: job.id,
             externalSourceID: job.id,
@@ -80,7 +70,6 @@ export const fetchJobDetailsFromAPI = async (id: string) => {
             }
         };
         const response = await axios.request(options);
-        console.log(response.data, 'Job Details');
         const jobDetails: JobAPIResponse = response.data;
         return {
             id: jobDetails.id,
@@ -188,16 +177,6 @@ const saveJobForUser = async (jobId: Job['id'], jobSeekerId: string) => {
     return;
 }
 
-// const unSaveJobForUser = async (jobId: Job['id'], userId: string) => {
-//     const savedJob = await prisma.savedJob.deleteMany({
-//         where: {
-//             jobId: jobId,
-//             jobSeekerId: userId
-//         }
-//     });
-//     return savedJob;
-// }
-
 export const saveJob = async ({job, userId}: SaveJobType) => {
     try {
         const { id, ...rest } = job;
@@ -214,8 +193,6 @@ export const saveJob = async ({job, userId}: SaveJobType) => {
                 userId
             }
         });
-
-        console.log(jobExists, jobSeekerExists, 'Job and JobSeeker');
         if (jobExists && jobSeekerExists) {
             const saveJob = await saveJobForUser(jobExists.id, jobSeekerExists.id);
             return {

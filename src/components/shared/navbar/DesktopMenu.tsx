@@ -3,14 +3,11 @@
 import * as React from "react"
 import Link from "next/link"
  
-// import { cn } from "@/lib/utils"
 import {
   NavigationMenu,
-//   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-//   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
@@ -25,14 +22,14 @@ export default function DesktopMenu() {
                     </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <Link href="/employers" legacyBehavior passHref>
+                    <Link href="#" legacyBehavior passHref>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                             For Employers
                         </NavigationMenuLink>
                     </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                    <Link href="/resources" legacyBehavior passHref>
+                    <Link href="#" legacyBehavior passHref>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                             Resources
                         </NavigationMenuLink>

@@ -2,9 +2,6 @@ import { NextResponse } from "next/server";
 import jwksClient from "jwks-rsa";
 import jwt from "jsonwebtoken";
 
-// The Kinde issuer URL should already be in your `.env` file
-// from when you initially set up Kinde. This will fetch your
-// public JSON web keys file
 const client = jwksClient({
   jwksUri: `${process.env.KINDE_ISSUER_URL}/.well-known/jwks.json`,
 });
@@ -15,8 +12,8 @@ export async function POST(req: Request) {
     const token = await req.text();
 
     // Decode the token
-    const { header } = jwt.decode(token, { complete: true });
-    const { kid } = header;
+    const header = jwt.decode(token, { complete: true })?.header;
+    const kid = header?.kid;
 
     // Verify the token
     const key = await client.getSigningKey(kid);
@@ -24,21 +21,21 @@ export async function POST(req: Request) {
     const event = await jwt.verify(token, signingKey);
 
     // Handle various events
-    switch (event?.type) {
+    switch (event) {
       case "user.updated":
         // handle user updated event
         // e.g update database with event.data
-        console.log(event.data);
+        console.log(event);
         break;
       case "user.created":
         // handle user created event
         // e.g add user to database with event.data
-        console.log(event.data);
+        console.log(event);
         break;
       case "user.authenticated":
         // handle user created event
         // e.g add user to database with event.data
-        console.log(event.data, "webhook event");
+        console.log(event, "webhook event");
         break;
       default:
         // other events that we don't handle

@@ -80,7 +80,6 @@ export default function EditWorkExperience(
         if (data.id === '' && showForm) {
             return;
         }
-        console.log(data, showForm);
         const exps = [];
         exps.push(data);
         submit({
@@ -168,9 +167,7 @@ export default function EditWorkExperience(
                                 'Edit',
                                 'New',
                             ]}
-                            onDelete={(id) => {
-                                console.log(id, 'deleted');
-                            }}
+                            onDelete={() => {}}
                             onSelectMenuItem={(item) => handleMenuSelect(item, experience.id)}
                         />
                     </div>

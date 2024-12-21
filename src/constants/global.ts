@@ -5,14 +5,12 @@ export const themes = [
 ];
 
 export const JOB_TYPES = [
-    'FULL_TIME',
-    'PART_TIME',
-    'REMOTE',
-    'CONTRACTOR',
-    'INTERN',
-    'TEMPORARY',
-    'VOLUNTEER',
-    'OTHER'
+    'Entry Level',
+    'Mid Level',
+    'Senior Level',
+    'Lead',
+    'Management',
+    'Internship',
 ];
 
 export const SOCIAL_PLATFORMS = [

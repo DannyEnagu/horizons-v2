@@ -1,5 +1,4 @@
 
-// import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";

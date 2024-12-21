@@ -1,6 +1,5 @@
 import BackButton from '@/components/search/BackButton';
 import Divider from '@/components/shared/Divider';
-// import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const Loading = () => {
