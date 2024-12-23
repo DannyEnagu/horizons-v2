@@ -20,6 +20,8 @@ Nextjs, typeScript, TailwindCSS, Kinde, axios, shadcn/ui, TheMuse api.
 
 **Database:** Vercel-postgres, Prisma ORM
 
+[![My Skills](https://skillicons.dev/icons?i=nextjs,tailwind,prisma,vercel)](https://skillicons.dev)
+
 ## Installation
 
 Clone the repo
