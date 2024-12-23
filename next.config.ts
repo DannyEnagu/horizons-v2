@@ -14,5 +14,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
-// https://media.licdn.com

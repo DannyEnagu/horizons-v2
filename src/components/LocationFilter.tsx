@@ -26,7 +26,14 @@ export default function LocationFilter({ counties }: LocationPickerProps) {
         router.push(newUrl, { scroll: false });
     }
 
-    const sortedCountries = counties ? counties.sort((a, b) => a.name.common.localeCompare(b.name.common)) : null;
+    const sortedCountries = counties ? counties.sort((a, b) => a.name.localeCompare(b.name)) : null;
+
+    const locations = [
+        {
+            name: 'Flexible / Remote',
+        },
+        ...sortedCountries || []
+    ]
 
     return (<Select onValueChange={(value) => handleUpdateParams(value)}>
         <SelectTrigger className="background-light800_dark_gradient px-3 py-6 gap-4 w-full">
@@ -37,10 +44,10 @@ export default function LocationFilter({ counties }: LocationPickerProps) {
         </SelectTrigger> 
         <SelectContent className="rounded border bg-light-900 py-2 dark:border-dark-400 dark:bg-dark-300 max-h-[350px] max-w-[210px]">
             <SelectGroup>
-                {sortedCountries ? sortedCountries.map((country) => (
+                {locations ? locations.map((country) => (
                     <SelectItem
-                    key={country.name.common}value={country.name.common}>
-                        {country.name.common}
+                    key={country.name}value={country.name}>
+                        {country.name}
                     </SelectItem>
                 )) : (
                     <SelectItem value="No data found">

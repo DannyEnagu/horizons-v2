@@ -11,28 +11,20 @@ import {
 } from "@/components/ui/pagination";
 import { getUpdatedParams } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 interface PaginationProps {
     totalPages: number;
-    // currentPage: number;
-    // onPageChange: (page: number) => void;
+    currentPage: number;
 }
 
-export default function PaginationComponent({ totalPages }: PaginationProps) {
+export default function PaginationComponent({ totalPages, currentPage }: PaginationProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [currentPage, setCurrentPage] = useState(1);
 
     const handleUpdateParams = (value: number | string) => {
         const newUrl = getUpdatedParams(value as string, 'page', searchParams.toString());
         router.push(newUrl, { scroll: false });
     }
-
-    useEffect(() => {
-        const page = searchParams.get('page');
-        setCurrentPage(page ? parseInt(page) : 1);
-    }, [searchParams]);
 
     return (
         <Pagination>

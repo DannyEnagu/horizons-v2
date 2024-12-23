@@ -25,7 +25,6 @@ export function ThemeProvider({
   const [mode, setMode] = useState('');
 
   const handleThemeChange = () => {
-    // localStorage.theme in components/shared/navbar/Theme.tsx
 
     if (
       localStorage.theme === 'dark' ||
