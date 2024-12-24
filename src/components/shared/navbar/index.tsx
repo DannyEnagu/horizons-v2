@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import MobileMenu from "./MobileMenu";
 import UserAvatar from "../UserAvatar";
 import { getExistingUserOrCreateNewUser } from "@/server/actions/user.action";
+import Logo from "../Logo";
 
 export default async function Navbar() {
   const {isUserAuthenticated, user} = await getExistingUserOrCreateNewUser();
@@ -14,7 +15,9 @@ export default async function Navbar() {
     <nav className="fixed top-0 w-screen z-10 py-4 px-8 lg:px-16 border-b border-color flex-between background-light850_dark100">
         <div className="flex items-center gap-4 md:gap-10 lg:gap-40">
           <MobileMenu isUserAuthenticated={isUserAuthenticated} />
-          <Link href="/">Logo</Link>
+          <Link href="/">
+            <Logo />
+          </Link>
           <DesktopMenu />
         </div>
         <div className="flex items-center space-x-4">
