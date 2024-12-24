@@ -1,7 +1,6 @@
 'use client';
 
 import React from "react";
-import { Loader } from "lucide-react";
 import _ from "lodash";
 import {
     Sheet,
@@ -21,6 +20,7 @@ import EditProfessionalDetails, { Profile } from "./EditProfessionalDetails";
 import { updateUser } from "@/server/actions/user.action";
 import { createSocialProfile, updateJobSeekerProfile, updateSocialProfile, updateWorkExperience } from "@/server/actions/profile.action";
 import { useToast } from "@/hooks/use-toast";
+import Spinner from "../shared/Spinner";
 
 
 const tabs = [
@@ -46,7 +46,7 @@ export default function EditProfileSheet({
 }: EditProfileSheetProps) {
     const { toast } = useToast();
     const [activeTab, setActiveTab] = React.useState<ExplorationTab | null>(tabs[0]);
-    const [isSaving, setIsSaving] = React.useState<boolean>(false);
+    const [isSaving, setIsSaving] = React.useState<boolean>(true);
     const [isDataChanged, setIsDataChanged] = React.useState<boolean>(false);
     const [changes, setChanges] = React.useState<Partial<EditProfileSheetProps>>({});
 
@@ -301,11 +301,11 @@ export default function EditProfileSheet({
                             variant="secondary"
                             disabled={isSaving || !isDataChanged}
                             onClick={() => handleSubmit()}
+                            className="flex items-center gap-2"
                         >
-                            {isSaving ? <Loader /> : 'Save changes'}
+                            <span>Save changes</span>
+                            {isSaving && <Spinner />}
                         </Button>
-                    {/* <SheetClose asChild>
-                    </SheetClose> */}
                 </div>
                 <div className="overflow-auto border-t-2 border-color">
                     <ExplorationTabs

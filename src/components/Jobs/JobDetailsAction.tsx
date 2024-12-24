@@ -1,6 +1,6 @@
 'use client';
 
-import { Bookmark, Loader2, SquareArrowOutUpRight } from "lucide-react";
+import { Bookmark, SquareArrowOutUpRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast"
 import { Job, User } from "@prisma/client";
@@ -8,6 +8,7 @@ import { saveJob } from "@/server/actions/jobs.action";
 import { useState } from "react";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { redirect } from "next/navigation";
+import Spinner from "../shared/Spinner";
 
 export default function JobDetailsActionButtons({ job, userId }: 
     { job: Job, userId: User['id'] }
@@ -62,7 +63,7 @@ export default function JobDetailsActionButtons({ job, userId }:
             onClick={() => handleSaveJob()}
         >
             <span className="flex-1">Save Job</span>
-            {isSaving ? <Loader2 /> : <Bookmark size={20} />}
+            {isSaving ? <Spinner /> : <Bookmark size={20} />}
         </Button>
     </div>)
 }
