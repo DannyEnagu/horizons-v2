@@ -117,20 +117,6 @@ export const fetchJobDetails = async (id: string) => {
     }
 }
 
-const createJob = async (job: Omit<Job, 'id'>) => {
-    try {
-        const newJob = await prisma.job.create({
-            data: {
-                ...job,
-            }
-        });
-        return newJob;
-    } catch (error) {
-        console.error(`❌ ${error} ❌`);
-        throw error;
-    }
-}
-
 const createTheMuseJob = async (job: Job) => {
     try {
         const newJob = await prisma.job.create({
@@ -243,9 +229,22 @@ export const saveJob = async ({job, userId}: SaveJobType) => {
     }
 }
 
-export const createNewJob = async (job: Job) => {
+type NewJob = Omit<Job,
+    'id' |
+    'createdAt' |
+    'updatedAt' |
+    'externalSourceID' |
+    'categories' |
+    'externalSourceUrl'
+>;
+
+export const createNewJob = async (job: NewJob) => {
     try {
-        const newJob = await createJob(job);
+        const newJob = await prisma.job.create({
+            data: {
+                ...job,
+            }
+        });
         return {
             message: newJob ?  'Job created successfully' : 'Job not created',
             isSuccessful: !!newJob,

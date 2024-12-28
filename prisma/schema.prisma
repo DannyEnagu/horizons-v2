@@ -28,13 +28,14 @@ enum Role {
 }  
 
 model Employer {  
-  id          String   @id @default(cuid()) 
-  companyName String  
-  website     String?
-  companyLogo String?
-  user        User     @relation(fields: [userId], references: [id])  
-  userId      String      @unique  
-  jobs        Job[]  
+  id                  String   @id @default(cuid()) 
+  companyName         String
+  companyDescription  String?
+  website             String?
+  companyLogo         String?
+  user                User     @relation(fields: [userId], references: [id])  
+  userId              String      @unique  
+  jobs                Job[]  
 }  
 
 model JobSeeker {  
@@ -92,7 +93,7 @@ model Job {
   descriptionType String     @db.VarChar(5)  
   validUntil      DateTime?
   postedOn        DateTime?  
-  categories      String?  
+  categories      String?
   level           String?   
   externalSourceUrl String?
   employmentTypes String?

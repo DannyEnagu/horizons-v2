@@ -46,7 +46,7 @@ export default function EditProfileSheet({
 }: EditProfileSheetProps) {
     const { toast } = useToast();
     const [activeTab, setActiveTab] = React.useState<ExplorationTab | null>(tabs[0]);
-    const [isSaving, setIsSaving] = React.useState<boolean>(true);
+    const [isSaving, setIsSaving] = React.useState<boolean>(false);
     const [isDataChanged, setIsDataChanged] = React.useState<boolean>(false);
     const [changes, setChanges] = React.useState<Partial<EditProfileSheetProps>>({});
 

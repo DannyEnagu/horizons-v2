@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
-import DesktopMenu from "./DesktopMenu";
 import ThemeSwitch from "./ThemeSwitch";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import MobileMenu from "./MobileMenu";
 import UserAvatar from "../UserAvatar";
 import { getExistingUserOrCreateNewUser } from "@/server/actions/user.action";
 import Logo from "../Logo";
+import Menu from "./Menu";
 
 export default async function Navbar() {
   const {isUserAuthenticated, user} = await getExistingUserOrCreateNewUser();
@@ -15,10 +15,13 @@ export default async function Navbar() {
     <nav className="fixed top-0 w-screen z-10 py-4 px-8 lg:px-16 border-b border-color flex-between background-light850_dark100">
         <div className="flex items-center gap-4 md:gap-10 lg:gap-40">
           <MobileMenu isUserAuthenticated={isUserAuthenticated} />
-          <Link href="/">
+          <Link className="hidden md:block" href="/">
             <Logo />
           </Link>
-          <DesktopMenu />
+          {/* Top Menu */}
+          <div className="hidden md:block">
+            <Menu type="desktop" />
+          </div>
         </div>
         <div className="flex items-center space-x-4">
           <ThemeSwitch />
@@ -39,7 +42,7 @@ export default async function Navbar() {
             </div>
           )}
           <Button variant="secondary" size="sm" className="btn btn-secondary">
-            <Link href="/post-job">Post a Job</Link>
+            <Link href="/employer/post-job">Post a Job</Link>
           </Button>
           {/* If loggedIn */}
           {isUserAuthenticated && (<>
