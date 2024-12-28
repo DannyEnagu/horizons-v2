@@ -16,6 +16,7 @@ import JobPreview from "../dailogs/JobPreview";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
 import { createNewJob } from "@/server/actions/jobs.action";
+import dayjs from "dayjs";
 
 interface Job {
     title: string;
@@ -41,7 +42,7 @@ export default function JobForm() {
         title: "",
         jobLevel: "",
         location: "",
-        validThrough: new Date().toISOString(),
+        validThrough: dayjs(new Date).add(30, 'day').format('YYYY-MM-DD'),
         description: "",
         salary: "",
     });
