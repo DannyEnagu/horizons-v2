@@ -8,7 +8,7 @@ import { Job } from '@prisma/client';
 
 export const fetchLocation = async () => {
     const response = await fetch('http://ip-api.com/json/?fields=country');
-    return await response.json();;
+    return await response.json();
 };
   
 export const fetchCountries = async () => {
