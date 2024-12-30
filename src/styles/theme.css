@@ -202,6 +202,27 @@
   .shadow-light100_darknone {
     @apply shadow-light-100 dark:shadow-none;
   }
+  
+  .grid-dynamic {
+    @apply grid grid-cols-[repeat(auto-fill,_minmax(300px,_1fr))]
+  }
+
+  .bg-dialog-content {
+    @apply bg-light-800 dark:bg-dark-400;
+  }
+
+  .dialog-lg {
+    @apply !w-[95%] !max-w-[800px] !max-h-[95vh] overflow-y-auto;
+  }
+  
+  .dialog-2xl {
+    @apply !w-[95%] !max-w-[1200px] !max-h-[95vh] overflow-y-auto;
+  }
+
+  .dialog-sm {
+    @apply !w-[95%] !max-w-[400px] !max-h-[95vh] overflow-y-auto;
+  }
+
 
   .primary-gradient {
     background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
@@ -214,4 +235,5 @@
       rgba(19, 22, 28, 0.7) 100%
     );
   }
+
 }

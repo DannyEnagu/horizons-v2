@@ -2,9 +2,9 @@
 import { ChevronDown } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "../ui/label";
-import { Checkbox } from "../ui/checkbox";
-import { CheckedState } from "@radix-ui/react-checkbox";
+import { useState } from "react";
 
 export type FilterItem = {
     label: string | number;
@@ -16,12 +16,13 @@ interface JobFilterProps {
     placeholder: string;
     items: FilterItem[];
     multiple?: boolean;
-    onFilterChange: (value: FilterItem) => void;
+    onFilterChange: (value: string) => void;
 }
 
 export default function JobFilter({ placeholder, items, onFilterChange }: JobFilterProps) {
-    const handleFilterChange = (checked: CheckedState, value: FilterItem) => {
-        value.isActive = checked;
+    const [checked, setChecked] = useState('');
+    const handleFilterChange = (value: string) => {
+        setChecked(value);
         onFilterChange(value);
     }
     return (
@@ -38,10 +39,14 @@ export default function JobFilter({ placeholder, items, onFilterChange }: JobFil
                 <ul className="p-4 space-y-1">
                     {items.map((item) => (
                         <li key={item.value}>
-                            <Label className="flex items-center gap-4 text-sm font-normal">
-                                <Checkbox onCheckedChange={(checked) => handleFilterChange(checked, item)} />
-                                <span>{item.label}</span>
-                            </Label>
+                            <RadioGroup value={checked} onValueChange={handleFilterChange}>
+                                <div className="flex items-center space-x-2 text-sm font-normal">
+                                    <RadioGroupItem
+                                        value={`${item.value}`} id={`${item.value}`}
+                                    />
+                                    <Label htmlFor={`${item.value}`}>{item.label}</Label>
+                                </div>
+                            </RadioGroup>
                         </li>
                     ))}
                 </ul>

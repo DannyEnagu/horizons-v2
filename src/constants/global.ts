@@ -13,6 +13,15 @@ export const JOB_TYPES = [
     'Internship',
 ];
 
+export const JOB_LEVELS_MAP = {
+    'internship': 0,
+    'entry-level': 2,
+    'mid-level': 4,
+    'senior-level': 5,
+    'lead': 5,
+    'management': 5
+};
+
 export const SOCIAL_PLATFORMS = [
     {
         url: 'https://www.linkedin.com/in/',

@@ -53,7 +53,7 @@ export default function JobPreview({
                 Preview
             </Button>
         </DialogTrigger>
-        <DialogContent className="w-[95%] max-w-[800px] max-h-[95vh] overflow-y-auto">
+        <DialogContent className="dialog-lg">
             <DialogHeader>
                 <DialogTitle className="text-center">
                     Job Details Preview

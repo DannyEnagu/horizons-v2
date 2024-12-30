@@ -9,7 +9,7 @@ type Menu = {
 export const EMPLOYER_MENU: Menu[] = [
     {
       title: "Post a Job",
-      href: "/employer/post-job",
+      href: "/post-job",
       description:
         "Post a job and reach out to the best candidates for your company.",
       icon: "/icons/briefcase.svg",
@@ -23,7 +23,7 @@ export const EMPLOYER_MENU: Menu[] = [
     },
     {
       title: "Candidate Search",
-      href: "/employer/candidate-search",
+      href: "/talent-search",
       description:
         "Search for candidates based on your requirements.",
       icon: "/icons/user-search.svg",

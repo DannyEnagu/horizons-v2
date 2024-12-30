@@ -15,6 +15,7 @@ import { SheetClose } from "@/components/ui/sheet";
 interface MenuProps {
     type?: string;
 }
+
 export default function Menu ({ type }: MenuProps) {
     return (
         <NavigationMenu>

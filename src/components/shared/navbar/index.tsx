@@ -42,7 +42,11 @@ export default async function Navbar() {
             </div>
           )}
           <Button variant="secondary" size="sm" className="btn btn-secondary">
-            <Link href="/employer/post-job">Post a Job</Link>
+            {!isUserAuthenticated
+            ? (<LoginLink postLoginRedirectURL="/post-job">
+                Post a Job
+              </LoginLink>)
+            : (<Link href="/post-job">Post a Job</Link>)}
           </Button>
           {/* If loggedIn */}
           {isUserAuthenticated && (<>
