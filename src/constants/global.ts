@@ -36,3 +36,14 @@ export const SOCIAL_PLATFORMS = [
         label: 'twitter'
     }
 ];
+
+export const OVERVIEW_MENUITEMS = [
+    {
+        url: 'https://www.linkedin.com/in/',
+        label: 'Dashboard'
+    },
+    {
+        url: 'https://www.facebook.com/',
+        label: 'Notifications'
+    }
+];
