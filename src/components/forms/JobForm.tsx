@@ -301,7 +301,7 @@ export default function JobForm() {
     }
     
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 md:w-[60%]">
             <InputWrapper
                 label="Position or Title"
                 labelFor="title"
@@ -464,7 +464,7 @@ export default function JobForm() {
                 />
             </InputWrapper>
             {/* Company Details */}
-            <h3 className="text-lg font-semibold mt-8">
+            <h3 className="text-center uppercase font-bold mt-8">
                 Company Details
             </h3>
             {/* company name */}
@@ -546,7 +546,7 @@ export default function JobForm() {
             {error.message && <p className="text-sm text-red-500">
                 {error.message}
             </p>}
-            <div className="flex items-center justify-end gap-3 !mt-8 sm:w-3/4 md:w-1/2">
+            <div className="flex items-center justify-end gap-3 !mt-8 md:w-3/4 md:mx-auto">
                 <JobPreview
                     jobDetails={{
                         title: job.title,

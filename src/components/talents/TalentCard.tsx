@@ -25,6 +25,7 @@ import { Experience, JobSeeker, SocialProfile, User } from "@prisma/client";
 import { Briefcase, ExternalLink, Mail, MapPin, Smartphone } from "lucide-react";
 
 export interface TalentCardProps {
+    children?: React.ReactNode;
     profile: JobSeeker;
     user: Pick<User, "fullName" | "avatar" | "email" | "role" | "id">;
     workExperience: Experience[];
@@ -36,12 +37,12 @@ export default function TalentCard({
     user,
     workExperience,
     socials,
+    children,
 }: TalentCardProps) {
-    const topSkills = profile.skills.slice(0, 3);
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Card className="cursor-pointer">
+                {/* <Card className="cursor-pointer">
                     <CardHeader>
                         <div className="flex items-center justify-center">
                             <div className="p-[7px] rounded-full background-light400_light500">
@@ -69,7 +70,8 @@ export default function TalentCard({
                             View Profile
                         </Button>
                     </CardFooter>
-                </Card>
+                </Card> */}
+                {children}
             </DialogTrigger>
             <DialogContent className="dialog-2xl p-8">
                 <DialogHeader className="sr-only">

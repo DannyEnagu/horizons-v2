@@ -1,5 +1,5 @@
 import Header from "@/components/dashboard/Header";
-import SideMenu from "@/components/dashboard/SideBar";
+import SideMenu from "@/components/dashboard/nav/SideBar";
 
 export default function Layout({ children }: {
     children: React.ReactNode;

@@ -2,7 +2,7 @@ import Image from "next/image";
 import ThemeSwitch from "../shared/navbar/ThemeSwitch";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import MobileSideMenu from "./MobileSideMenu";
+import MobileSideMenu from "./nav/MobileSideMenu";
 
 export default function Header() {
     const isUnreadAlert = true;
@@ -14,7 +14,7 @@ export default function Header() {
             </div>
             <div className="flex items-center gap-4">
                 <ThemeSwitch />
-                {isUnreadAlert && (<Link href="/employer/dashboard/notifications" className="relative">
+                {isUnreadAlert && (<Link href="/employer/messages" className="relative">
                     <span className="absolute top-[-5px] right-[-5px] h-2 w-2 bg-red-500 rounded-full"></span>
                     <Image
                         src="/icons/bell.svg"

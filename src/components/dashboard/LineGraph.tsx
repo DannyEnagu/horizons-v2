@@ -71,7 +71,7 @@ export default function LineGraph() {
                     Job Views
                 </h2>
             </Card.Header>
-            <Card.Content className="lg:h-[350px] w-full">
+            <Card.Content className="lg:h-[450px] w-full">
                 <Line className="!h-full !w-full" options={options} data={data} />
             </Card.Content>
         </Card>

@@ -49,7 +49,12 @@ export default function JobPreview({
 }: JobPreviewProps) {
     return (<Dialog>
         <DialogTrigger asChild>
-            <Button size="sm" variant="outline">
+            <Button
+                disabled={!title || !companyName || !location || !employmentTypes || !description || !companyWebSite || !level}
+                size="sm"
+                variant="link"
+                className="no-underline"
+            >
                 Preview
             </Button>
         </DialogTrigger>

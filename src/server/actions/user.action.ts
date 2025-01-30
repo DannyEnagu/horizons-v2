@@ -6,15 +6,15 @@ import { DeleteUserType } from "@/types/user";
 import { Employer, User } from "@prisma/client";
 
 
-export async function getUsersByKindeId (kindeId: string) {
+export async function getUsersByKindeId (kindeId: string | undefined) {
     try {
-        const users = await prisma.user.findFirst({
+        const user = await prisma.user.findFirst({
             where: {
                 kindeId
             }
         });
 
-        return users;
+        return user;
     } catch (error) {
         console.error(`❌ ${error} ❌`);
         throw error;

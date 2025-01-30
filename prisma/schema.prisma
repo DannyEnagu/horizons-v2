@@ -15,7 +15,7 @@ model User {
   avatar    String?  
   email     String   @unique  
   createdAt DateTime @default(now())  
-  updatedAt DateTime @updatedAt  
+  updatedAt DateTime @updatedAt 
   role      Role     @default(JOBSEEKER)  
 
   employer  Employer?  
@@ -36,7 +36,7 @@ model Employer {
   user                User     @relation(fields: [userId], references: [id])  
   userId              String      @unique  
   jobs                Job[]  
-}  
+}
 
 model JobSeeker {  
   id          String     @id @default(cuid())  
@@ -98,6 +98,7 @@ model Job {
   externalSourceUrl String?
   employmentTypes String?
 }
+
 
 model Application {
   id          String  @id @default(cuid()) 

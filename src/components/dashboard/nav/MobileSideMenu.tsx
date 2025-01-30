@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
-//   SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -10,10 +9,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
-import UserAvatar from "../shared/UserAvatar";
+import UserAvatar from "../../shared/UserAvatar";
 import MenuGroup from "./MenuGroup";
-import { HIRING_MENUITEMS, OVERVIEW_MENUITEMS, SETTINGS_MENUITEMS } from "@/constants/global";
-import Logo from "../shared/Logo";
+import { HIRING_MENUITEMS, OVERVIEW_MENUITEMS, SETTINGS_MENUITEMS } from "@/constants/menu";
+import Logo from "../../shared/Logo";
 
 
 export default function MobileSideMenu() {

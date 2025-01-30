@@ -29,7 +29,16 @@ const Content = ({children, className}: DashboardCardProps) => {
     );
 }
 
+const Footer = ({children, className}: DashboardCardProps) => {
+    return (
+        <div className={`p-4 border-t border-color ${className}`}>
+            {children}
+        </div>
+    );
+}
+
 Card.Header = Header;
 Card.Content = Content;
+Card.Footer = Footer;
 
 export default Card;

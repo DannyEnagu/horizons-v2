@@ -5,6 +5,10 @@ import { getTalents } from "@/server/actions/talent.action";
 import PaginationComponent from "../shared/PaginationComponent";
 import { useSearchParams } from "next/navigation";
 import { JOB_LEVELS_MAP } from "@/constants/global";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import UserAvatar from "../shared/UserAvatar";
+import Skills from "../shared/Skills";
+import { Button } from "../ui/button";
 
 export default function Talents() {
     const searchParams = useSearchParams();
@@ -17,6 +21,7 @@ export default function Talents() {
     const [talents, setTalents] = useState<TalentCardProps[]>([]);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
+    const topSkills = (skills: string[]) => skills.slice(0, 3);
 
     useEffect(() => {
         async function fetchTalents() {
@@ -53,7 +58,37 @@ export default function Talents() {
                         user={talent?.user}
                         workExperience={talent?.workExperience}
                         socials={talent?.socials}
-                    />
+                    >
+                        <Card className="cursor-pointer">
+                            <CardHeader>
+                                <div className="flex items-center justify-center">
+                                    <div className="p-[7px] rounded-full background-light400_light500">
+                                        <UserAvatar
+                                            name={talent.user.fullName}
+                                            avatar={talent.user.avatar}
+                                            className="h-[120px] sm:h-[150px] w-[120px] sm:w-[150px]"
+                                        />
+                                    </div>
+                                </div>
+                                <CardTitle className="text-center space-y-2 !mt-4">
+                                    <p>{talent.user.fullName}</p>
+                                    <p className="text-muted text-xl">{talent.profile.headline}</p>
+                                </CardTitle>
+                                <CardDescription className="text-center text-muted sm:leading-6">
+                                    {talent.profile.bio}
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <h3>Top Skills</h3>
+                                <Skills skills={topSkills(talent?.profile.skills)} />
+                            </CardContent>
+                            <CardFooter>
+                                <Button variant="outline" size="sm" className="block w-full">
+                                    View Profile
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    </TalentCard>
                 ))}
                 {loading && (<>
                     <LoadingTalentCard />

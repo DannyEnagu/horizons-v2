@@ -1,27 +1,59 @@
+'use client';
+
+import { useEffect, useState } from "react";
+import {useKindeBrowserClient} from "@kinde-oss/kinde-auth-nextjs";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
+import { getDashboardDataByEmployerId } from "@/server/actions/employer.action";
 
 export default function StatCards() {
+    const { getUser } = useKindeBrowserClient();
+    const userId = getUser()?.id;
+    const [stats, setStats] = useState<{
+        postedJobs: number | undefined,
+        activeJobs: number | undefined,
+        applications: number | undefined,
+        shortlisted: number | undefined
+    }>({
+        postedJobs: undefined,
+        activeJobs: undefined,
+        applications: undefined,
+        shortlisted: undefined
+    });
+
+    
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const { result } = await getDashboardDataByEmployerId(userId);
+                setStats(result);
+            } catch (error) {
+                console.error(`❌ ${error} ❌`);
+            }
+        };
+        fetchStats();
+    }, [userId]);
+
     return (
         <div className="flex flex-wrap items-center justify-center gap-8">
             <StatCard
                 name="Posted Jobs"
-                value={7}
+                value={stats.postedJobs}
                 icon="plus-circle"
             />
             <StatCard
                 name="Active Jobs"
-                value={3}
+                value={stats.activeJobs}
                 icon="briefcase"
             />
             <StatCard
                 name="Applications"
-                value={20}
+                value={stats.applications}
                 icon="list"
             />
             <StatCard
                 name="Shortlisted"
-                value={150}
+                value={stats.shortlisted}
                 icon="list-filter-plus"
             />
         </div>
@@ -30,7 +62,7 @@ export default function StatCards() {
 
 interface StatCardProp {
     name: string;
-    value: string | number,
+    value: number | undefined;
     icon: string
 }
 
@@ -40,7 +72,7 @@ function StatCard({name, value, icon}: StatCardProp) {
     <div className="relative">
         <div className="flex items-center gap-0 rounded-2xl bg-white dark:dark-gradient px-4 w-[200px] h-[85px] drop-shadow-lg z-20">
             <div className="flex flex-col gap-1">
-                {value === ""
+                {value === undefined
                     ? <Skeleton className="w-7 h-8" />
                     : <span className="font-medium text-2xl">
                             {zeroPrefix(value as number)}
