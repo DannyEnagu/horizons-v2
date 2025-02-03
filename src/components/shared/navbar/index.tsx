@@ -5,12 +5,13 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import MobileMenu from "./MobileMenu";
 import UserAvatar from "../UserAvatar";
-import { getExistingUserOrCreateNewUser } from "@/server/actions/user.action";
+
 import Logo from "../Logo";
 import Menu from "./Menu";
+import useUser from "@/hooks/use-user";
 
-export default async function Navbar() {
-  const {isUserAuthenticated, user} = await getExistingUserOrCreateNewUser();
+export default function Navbar() {
+  const { isAuthenticated: isUserAuthenticated,  user } = useUser();
   return (
     <nav className="fixed top-0 w-screen z-10 py-4 px-8 lg:px-16 border-b border-color flex-between background-light850_dark100">
         <div className="flex items-center gap-4 md:gap-10 lg:gap-40">

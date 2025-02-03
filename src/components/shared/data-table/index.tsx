@@ -1,5 +1,6 @@
 "use client"
- 
+
+import React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -9,7 +10,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
- 
+
 import {
   Table,
   TableBody,
@@ -18,18 +19,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { DataTablePagination } from "./DataTablePagination";
 import { Input } from "@/components/ui/input";
-import React from "react";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  loading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    loading = false,
   }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
       []
@@ -79,7 +82,7 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {!loading && table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -92,13 +95,19 @@ export function DataTable<TData, TValue>({
                   ))}
                 </TableRow>
               ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+            ) : loading ? (<TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                      Loading...
+                    </TableCell>
+                  </TableRow>)
+                : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                      No results.
+                    </TableCell>
+                  </TableRow>
+                )
+            }
           </TableBody>
         </Table>
         <DataTablePagination table={table} />
