@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import {RegisterLink, LogoutLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
 import { Button } from "@/components/ui/button"
 import {
@@ -12,6 +11,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import Logo from "../Logo";
+import Menu from "./Menu";
+import Link from "next/link";
 
 interface MobileMenuProps {
   isUserAuthenticated: boolean;
@@ -24,11 +26,11 @@ export default function MobileMenu({ isUserAuthenticated }: MobileMenuProps) {
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
             <Image
-                src="/icons/humbugger.svg"
-                alt="Toggle Mobile Menu"
-                width={24}
-                height={24}
-                className="dark:invert-colors"
+              src="/icons/humbugger.svg"
+              alt="Toggle Mobile Menu"
+              width={24}
+              height={24}
+              className="dark:invert-colors"
             />
         </Button>
       </SheetTrigger>
@@ -44,39 +46,12 @@ export default function MobileMenu({ isUserAuthenticated }: MobileMenuProps) {
       >
         <SheetClose asChild>
           <Link href="/">
-              Logo
+            <Logo />
           </Link>
         </SheetClose>
-        <ul className="flex flex-col gap-4 h-[80%] pt-20">
-            <li>
-              <SheetClose asChild>
-                <Link href="/" passHref>
-                  Jobs
-                </Link>
-              </SheetClose>
-            </li>
-            <li>
-              <SheetClose asChild>
-                <Link href="/employers" passHref>
-                  For Employers
-                </Link>
-              </SheetClose>
-            </li>
-            <li>
-              <SheetClose asChild>
-                <Link href="/resources" passHref>
-                    Resources
-                </Link>
-              </SheetClose>
-            </li>
-            <li>
-              <SheetClose asChild>
-                <Link href="/about" passHref>
-                  About
-                </Link>
-              </SheetClose>
-            </li>
-        </ul>
+        <div className="h-[80%] pt-20">
+          <Menu type="mobile" />
+        </div>
         <SheetFooter className="block">
           {/* If loggedIn */}
           {isUserAuthenticated && (

@@ -48,4 +48,4 @@ Visit [http://localhost:3000/](http://localhost:3000/) on your browser for the l
 
 ## Demo
 
-Explore the live demonstration of the project [here](https://horizons-jobs.vercel.app/)
+[Live demo of the project](https://horizons-jobs.vercel.app/)

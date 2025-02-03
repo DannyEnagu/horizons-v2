@@ -5,7 +5,7 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-  } from "@/components/ui/popover"
+  } from "@/components/ui/popover";
 import { themes } from "@/constants/global";
 import Image from "next/image";
 

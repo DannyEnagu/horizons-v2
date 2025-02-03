@@ -1,3 +1,4 @@
+
 export const themes = [
     { value: 'light', label: 'Light', icon: '/icons/sun.svg' },
     { value: 'dark', label: 'Dark', icon: '/icons/moon.svg' },
@@ -12,6 +13,15 @@ export const JOB_TYPES = [
     'Management',
     'Internship',
 ];
+
+export const JOB_LEVELS_MAP = {
+    'internship': 0,
+    'entry-level': 2,
+    'mid-level': 4,
+    'senior-level': 5,
+    'lead': 5,
+    'management': 5
+};
 
 export const SOCIAL_PLATFORMS = [
     {

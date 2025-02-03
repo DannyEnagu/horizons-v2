@@ -38,10 +38,6 @@ body {
 
 }
 
-.active-theme {
-  filter: brightness(0) saturate(100%) invert(43%) sepia(26%) saturate(3802%) hue-rotate(78deg) brightness(96%) contrast(108%) !important;
-}
-
 .primary-color {
   color: #14A800;
 }

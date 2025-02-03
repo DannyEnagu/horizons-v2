@@ -1,5 +1,5 @@
 import JobList from "@/components/Jobs/JobList";
-import JobSearchWrapper from "@/components/Jobs/JobSearchWrapper";
+import SearchWrapper from "@/components/Jobs/SearchWrapper";
 import PaginationComponent from "@/components/shared/PaginationComponent";
 import { fetchJobs, fetchLocation } from "@/server/actions/jobs.action";
 import { PageURLProps } from "@/types";
@@ -20,7 +20,11 @@ export default async function Page(props: PageURLProps) {
     return (
         <>
             <section className="container">
-                <JobSearchWrapper />
+                <SearchWrapper
+                    title="Jobs"
+                    description="Search for job openings"
+                    isJobSearch
+                />
             </section>
             <section className="container mt-20">
                 <JobList jobs={jobList} />

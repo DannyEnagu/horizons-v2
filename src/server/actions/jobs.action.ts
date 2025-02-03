@@ -8,7 +8,7 @@ import { Job } from '@prisma/client';
 
 export const fetchLocation = async () => {
     const response = await fetch('http://ip-api.com/json/?fields=country');
-    return await response.json();;
+    return await response.json();
 };
   
 export const fetchCountries = async () => {
@@ -111,20 +111,6 @@ export const fetchJobDetails = async (id: string) => {
             message: !jobDetails ? 'Job not found' : 'Success',
             result: {...jobDetails}
         };
-    } catch (error) {
-        console.error(`❌ ${error} ❌`);
-        throw error;
-    }
-}
-
-const createJob = async (job: Omit<Job, 'id'>) => {
-    try {
-        const newJob = await prisma.job.create({
-            data: {
-                ...job,
-            }
-        });
-        return newJob;
     } catch (error) {
         console.error(`❌ ${error} ❌`);
         throw error;
@@ -243,9 +229,22 @@ export const saveJob = async ({job, userId}: SaveJobType) => {
     }
 }
 
-export const createNewJob = async (job: Job) => {
+type NewJob = Omit<Job,
+    'id' |
+    'createdAt' |
+    'updatedAt' |
+    'externalSourceID' |
+    'categories' |
+    'externalSourceUrl'
+>;
+
+export const createNewJob = async (job: NewJob) => {
     try {
-        const newJob = await createJob(job);
+        const newJob = await prisma.job.create({
+            data: {
+                ...job,
+            }
+        });
         return {
             message: newJob ?  'Job created successfully' : 'Job not created',
             isSuccessful: !!newJob,
