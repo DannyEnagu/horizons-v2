@@ -93,40 +93,6 @@ export async function deleteUser (userId: DeleteUserType) {
     }
 };
 
-export async function getEmployerByUserId (userId: string) {
-    try {
-        const employers = await prisma.employer.findUnique({
-            where: {
-                userId
-            }
-        });
-
-        return {
-            message: employers ? "Employers fetched successfully" : "Failed to fetch employers",
-            isSuccessful: !!employers,
-            result: employers || null
-        };
-    } catch (error) {
-        console.error(`❌ ${error} ❌`);
-        throw error;
-    }
-};
-
-export async function getEmployerById (employerId: string) {
-    try {
-        const employer = prisma.employer.findUnique({
-            where: {
-                id: employerId
-            }
-        });
-
-        return employer;
-    } catch (error) {
-        console.error(`❌ ${error} ❌`);
-        throw error;
-    }
-};
-
 export async function createEmployer (employerData: Omit<Employer, 'id'>) {
     try {
         const employer = await prisma.employer.create({
@@ -145,3 +111,4 @@ export async function createEmployer (employerData: Omit<Employer, 'id'>) {
         throw error;
     }
 };
+

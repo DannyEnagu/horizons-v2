@@ -1,14 +1,34 @@
+'use client';
+
+import React from "react";
+import { Info } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import Card from "../Card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Spinner from "@/components/shared/Spinner";
 
 
 export default function AutoConfirmationEmail() {
-    const exampleEmail = `Hi {first_name},\n\nThank you for applying to the {job_offer} position at {company_name}. We have received your application and will be reviewing it shortly. If you are selected for an interview, you will be contacted by a member of our team.\n\nBest,\n{company_name} Team`;
-    const jobSubject = `{job_offer}`;
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [data, setData] = React.useState({
+        isAutoConfirmationEmailEnabled: true,
+        email: `Hi {first_name},\n\nThank you for applying to the {job_offer} position at {company_name}. We have received your application and will be reviewing it shortly. If you are selected for an interview, you will be contacted by a member of our team.\n\nBest,\n{company_name} Team`,
+        subject: `{job_offer} - Confirmation of Application`
+    });
+    
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setData({ ...data, [e.target.id]: e.target.value
+        });
+    };
+
+    const save = () => {
+        setIsLoading(true);
+        console.log(data);
+    }
     return (<>
         <Card className="background-light800_dark_gradient rounded-lg">
             <Card.Header className="!block">
@@ -20,29 +40,44 @@ export default function AutoConfirmationEmail() {
                         If enabled, an email will be sent to the candidate when they apply for a job.
                     </span>
                     <Switch
-                    //   checked={}
-                    //   onCheckedChange={field.onChange}
-                    //  className="ml-2"
+                        checked={data.isAutoConfirmationEmailEnabled}
+                      onCheckedChange={() => setData({ ...data, isAutoConfirmationEmailEnabled: !data.isAutoConfirmationEmailEnabled })}
                     />
                 </p>
             </Card.Header>
             <Card.Content>
-                <h2 className="text-xs text-muted">
+                <h2 className="text-xs text-muted mb-1">
                     Subject
                 </h2>
-                <p className="text-sm font-semibold mb-4">
-                    <Badge variant="outline">
-                        {jobSubject}
-                    </Badge> {' '}
-                    - Confirmation of Application
-                </p>
+                <Input
+                    id="subject"
+                    placeholder="Email Subject"
+                    value={data.subject}
+                    onChange={handleChange}
+                    className="text-sm mb-4 !bg-transparent"
+                />
+                <h2 className="text-xs text-muted mb-1">
+                    Email Body
+                </h2>
                 <Textarea
-                    id="summary"
+                    id="email"
                     rows={15}
                     placeholder="Start typing here..."
-                    value={exampleEmail}
+                    value={data.email}
+                    onChange={handleChange}
                     className="text-sm"
                 />
+                <div className="flex justify-end mt-4">
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        className="flex items-center gap-4"
+                        onClick={save}
+                    >
+                        <span>Save</span>
+                        {isLoading && <Spinner size="sm" />}
+                    </Button>
+                </div>
             </Card.Content>
             <Card.Footer>
                 <div className="flex items-center gap-4">

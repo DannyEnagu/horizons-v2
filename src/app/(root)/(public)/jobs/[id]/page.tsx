@@ -7,6 +7,7 @@ import JobDetailsActionButtons from "@/components/Jobs/JobDetailsAction";
 import { Job } from "@prisma/client";
 import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
 import { getUsersByKindeId } from "@/server/actions/user.action";
+import ApplicationForm from "@/components/forms/ApplicationForm";
 
 export default async function JobDetailsPage(props: PageURLProps) {
     const { id } = await props.params;
@@ -70,8 +71,12 @@ export default async function JobDetailsPage(props: PageURLProps) {
             </div>
         </div>
         <div className="p-4">
+            <ApplicationForm
+                job={jobDetails as Job}
+                user={user}
+            />
             <JobDetailsActionButtons
-                job={jobDetails as Job }
+                job={jobDetails as Job}
                 userId={user?.id as string}
             />
         </div>

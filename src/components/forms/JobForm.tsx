@@ -1,22 +1,23 @@
 'use client';
 
 import { useState } from "react";
+import dayjs from "dayjs";
 import { Button } from "../ui/button";
 import InputWrapper from "../profile/InputWrapper";
 import { Input } from "../ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Textarea } from "../ui/textarea";
 import UserAvatar from "../shared/UserAvatar";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import Spinner from "../shared/Spinner";
-import { getEmployerByUserId, getExistingUserOrCreateNewUser, updateUser, createEmployer } from "@/server/actions/user.action";
+import { getExistingUserOrCreateNewUser, updateUser, createEmployer } from "@/server/actions/user.action";
 import { User } from "@prisma/client";
 import JobPreview from "../dailogs/JobPreview";
 import { useToast } from "@/hooks/use-toast";
 import { ToastAction } from "../ui/toast";
 import { createNewJob } from "@/server/actions/jobs.action";
-import dayjs from "dayjs";
+import { getEmployerByUserId } from "@/server/actions/employer.action";
+import TextEditor from "../TextEditor";
 
 interface Job {
     title: string;
@@ -81,16 +82,16 @@ export default function JobForm() {
         const userId = userInfo?.id as string
         const employer = await getEmployerByUserId(userId);
 
-        if (employer.isSuccessful) {
+        if (employer) {
             setCompany((prevCompany) => ({
                 ...prevCompany,
-                companyName: employer.result?.companyName as string,
-                companyLogo: employer.result?.companyLogo as string,
-                companyWebsite: employer.result?.website as string,
+                companyName: employer?.companyName as string,
+                companyLogo: employer?.companyLogo as string,
+                companyWebsite: employer?.website as string,
                 loading: false
             }))
         }
-        setIsCompanyFound(employer.isSuccessful)
+        setIsCompanyFound(employer ? true : false)
     }
 
     function handleCompanyChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -123,7 +124,7 @@ export default function JobForm() {
         const employer = await getEmployerByUserId(userInfo?.id as string);
         // Post job to the server
         const newJob =  await createNewJob({
-            employerId: employer.result?.id as string,
+            employerId: employer?.id as string,
             title: job.title,
             description: job.description,
             location: job.location,
@@ -176,6 +177,7 @@ export default function JobForm() {
             companyName: company.companyName,
             companyLogo: company.companyLogo,
             website: company.companyWebsite,
+            companyDescription: company.companyDescription,
         });
 
         if (employer.isSuccessful) {
@@ -455,13 +457,10 @@ export default function JobForm() {
                 asCol
                 required
             >
-                <Textarea
-                    name="description"
-                    value={job.description}
-                    onChange={handleChange}
-                    className="w-full p-2 border border-gray-200 rounded-md"
-                    rows={10}
-                />
+                <TextEditor onEditorChange={(content) => setJob((prevJob) => ({
+                    ...prevJob,
+                    description: content,
+                }))} />
             </InputWrapper>
             {/* Company Details */}
             <h3 className="text-center uppercase font-bold mt-8">
@@ -534,13 +533,10 @@ export default function JobForm() {
                     labelFor="companyDescription"
                     asCol
                 >
-                    <Textarea
-                        name="companyDescription"
-                        value={company.companyDescription}
-                        onChange={handleCompanyChange}
-                        className="w-full p-2 border border-gray-200 rounded-md"
-                        rows={5}
-                    />
+                    <TextEditor onEditorChange={(content) => setCompany((prevCompany) => ({
+                        ...prevCompany,
+                        companyDescription: content,
+                    }))} />
                 </InputWrapper>
             </>}
             {error.message && <p className="text-sm text-red-500">

@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { getUsersByKindeId } from "./user.action";
-import { ApplicationStatus } from "@prisma/client";
+import { ApplicationStatus, Employer } from "@prisma/client";
 
 
 export const getDashboardDataByEmployerId = async (employerId: string | undefined) => {
@@ -105,3 +105,41 @@ export const getJobApplicationsByStatus = async (employerId: string | undefined,
         throw error;
     }
 }
+
+export const getEmployerByUserId = async (userId: string) => {
+    try {
+        const employer = await prisma.employer.findUnique({
+            where: {
+                userId
+            }
+        });
+
+        return employer;
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+};
+
+export const updateEmployer = async (employer: { id: string } & Partial<Employer>) => {
+    try {
+        const { id, ...rest } = employer;
+        const employerData = await prisma.employer.update({
+            where: {
+                id: id
+            },
+            data: {
+                ...rest
+            },
+        });
+
+        return {
+            message: employerData ? "Employer updated successfully" : "Failed to update employer",
+            isSuccessful: !!employerData,
+            result: employerData || null
+        };
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+};

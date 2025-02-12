@@ -4,6 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --brand-color: #14A800;
+  --text-brand: var(--brand-color);
+  --bg-brand: var(--brand-color);
+
+  --bg-brand-light: #e6f9e0;
+}
+
 
 body {
   font-family: 'Inter', sans-serif;
@@ -31,6 +39,7 @@ body {
   .border-color {
     @apply border-gray-200 dark:border-dark-400;
   }
+
   .ring-color {
     @apply ring-gray-200 dark:ring-dark-400;
   }
@@ -39,7 +48,19 @@ body {
 }
 
 .primary-color {
-  color: #14A800;
+  color: var(--brand-color);
+}
+
+.text-brand {
+  color: var(--brand-color);
+}
+
+.bg-brand {
+  background-color: var(--brand-color);
+}
+
+.bg-brand-light {
+  background-color: var(--bg-brand-light);
 }
 
 .profile-wrapper {

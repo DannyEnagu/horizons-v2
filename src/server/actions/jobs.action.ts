@@ -85,6 +85,11 @@ export const fetchJobDetailsFromAPI = async (id: string) => {
             externalSourceUrl: jobDetails.refs.landing_page,
             postedOn: jobDetails.publication_date,
             validUntil: jobDetails.validUntil || '',
+            createdAt: '',
+            updatedAt: '',
+            employerId: '',
+            companyLogo: '',
+            descriptionType: 'html',
         };
     } catch (error) {
         console.error(error);
