@@ -9,7 +9,7 @@
   --text-brand: var(--brand-color);
   --bg-brand: var(--brand-color);
 
-  --bg-brand-light: #e6f9e0;
+  --bg-brand-light: #14a80080;
 }
 
 
@@ -44,23 +44,25 @@ body {
     @apply ring-gray-200 dark:ring-dark-400;
   }
 
+  .bg-brand-light {
+    @apply bg-green-500/20;
+  }
 
+  .bg-brand {
+    @apply bg-green-500;
+  }
+
+  .text-brand {
+    @apply text-green-500;
+  }
+
+  .border-brand {
+    @apply border-green-500;
+  }
 }
 
 .primary-color {
   color: var(--brand-color);
-}
-
-.text-brand {
-  color: var(--brand-color);
-}
-
-.bg-brand {
-  background-color: var(--brand-color);
-}
-
-.bg-brand-light {
-  background-color: var(--bg-brand-light);
 }
 
 .profile-wrapper {

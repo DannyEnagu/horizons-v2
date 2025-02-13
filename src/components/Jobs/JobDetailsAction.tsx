@@ -45,7 +45,10 @@ export default function JobDetailsActionButtons({ job, userId }:
         })
 
     }
-    return (<div className="flex flex-col gap-4 sm:w-[200px] mx-auto mt-4">
+    return (<div className="flex flex-col gap-4 px-4">
+        <p className="text-base bg-yellow-500/15 p-4 rounded-lg italic">
+            This job was posted from an external source. You will be redirected to the external source to apply.
+        </p>
         <Button variant="secondary" className="w-full">
             <a
                 href={job.externalSourceUrl || ''}
@@ -53,7 +56,9 @@ export default function JobDetailsActionButtons({ job, userId }:
                 rel="noopener noreferrer"
                 className="flex items-center w-full"
             >
-                <span className="flex-1">Apply Now</span>
+                <span className="flex-1">
+                    Visit Job Posting
+                </span>
                 <SquareArrowOutUpRight size={20} />
             </a>
         </Button>
@@ -62,7 +67,9 @@ export default function JobDetailsActionButtons({ job, userId }:
             className="w-full"
             onClick={() => handleSaveJob()}
         >
-            <span className="flex-1">Save Job</span>
+            <span className="flex-1">
+                Save Job for Later
+            </span>
             {isSaving ? <Spinner /> : <Bookmark size={20} />}
         </Button>
     </div>)
