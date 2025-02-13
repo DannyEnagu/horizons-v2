@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
 import ThemeSwitch from "./ThemeSwitch";
@@ -11,11 +13,11 @@ import Menu from "./Menu";
 import useUser from "@/hooks/use-user";
 
 export default function Navbar() {
-  const { isAuthenticated: isUserAuthenticated,  user } = useUser();
+  const { user } = useUser();
   return (
     <nav className="fixed top-0 w-screen z-10 py-4 px-8 lg:px-16 border-b border-color flex-between background-light850_dark100">
         <div className="flex items-center gap-4 md:gap-10 lg:gap-40">
-          <MobileMenu isUserAuthenticated={isUserAuthenticated} />
+          <MobileMenu isUserAuthenticated={user?.isAuthenticated as boolean} />
           <Link className="hidden md:block" href="/">
             <Logo />
           </Link>
@@ -27,7 +29,7 @@ export default function Navbar() {
         <div className="flex items-center space-x-4">
           <ThemeSwitch />
           {/* If not loggedIn */}
-          {!isUserAuthenticated && (
+          {!user?.isAuthenticated && (
             <div className="hidden md:flex items-center gap-4 h-9">
               <Button variant="link" size="sm">
                 <LoginLink postLoginRedirectURL="/">
@@ -43,14 +45,14 @@ export default function Navbar() {
             </div>
           )}
           <Button variant="secondary" size="sm" className="btn btn-secondary">
-            {!isUserAuthenticated
+            {!user?.isAuthenticated
             ? (<LoginLink postLoginRedirectURL="/post-job">
                 Post a Job
               </LoginLink>)
             : (<Link href="/post-job">Post a Job</Link>)}
           </Button>
           {/* If loggedIn */}
-          {isUserAuthenticated && (<>
+          {user?.isAuthenticated && (<>
               <Link href="/profile">
                 <UserAvatar name={user?.fullName} avatar={user?.avatar} />
               </Link>

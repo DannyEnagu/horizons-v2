@@ -1,11 +1,17 @@
 'use client';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputWrapper from "../../profile/InputWrapper";
 import UserAvatar from "../../shared/UserAvatar";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { Textarea } from "../../ui/textarea";
 import { Button } from "../../ui/button";
+import useUser from "@/hooks/use-user";
+import { Skeleton } from "@/components/ui/skeleton";
+import { updateUser } from "@/server/actions/user.action";
+import { useToast } from "@/hooks/use-toast";
+import { updateEmployer } from "@/server/actions/employer.action";
+import Spinner from "@/components/shared/Spinner";
 
 interface ProfileEditor {
     firstName: string;
@@ -19,16 +25,44 @@ interface ProfileEditor {
 }
 
 export default function AdminProfile() {
+    const [submitting, setSubmitting] = useState<boolean>(false);
+    const { toast } = useToast();
+    const { user, loading } = useUser();
     const [data, setData] = useState<ProfileEditor>({
-        firstName: '',
-        lastName: '',
-        email: '',
-        avatar: '',
+        firstName: user?.fullName.split(' ')[0] || '',
+        lastName: user?.fullName.split(' ')[1] || '',
+        email: user?.email || '',
+        avatar: user?.avatar || '',
         companyName: '',
         companyWebsite: '',
         companyLogo: '',
         companyDescription: '',
     });
+
+    useEffect(() => {
+        if (user?.id) {
+            setData((prev) => ({
+                ...prev,
+                firstName: user?.fullName.split(' ')[0] || '',
+                lastName: user?.fullName.split(' ')[1] || '',
+                email: user?.email || '',
+                avatar: user?.avatar || '',
+                companyName: user?.employer?.companyName || '',
+                companyWebsite: user?.employer?.website || '',
+                companyLogo: user?.employer?.companyLogo || '',
+                companyDescription: user?.employer?.companyDescription || '',
+            }));
+        }
+
+    }, [user]);
+
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setData({
+            ...data,
+            [e.target.id]: e.target.value,
+        });
+    }
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -37,21 +71,58 @@ export default function AdminProfile() {
             reader.onload = () => {
                 setData({
                     ...data,
-                    avatar: reader.result as string,
+                    [e.target.id]: reader.result as string,
                 });
             }
             reader.readAsDataURL(file);
         }
     }
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setSubmitting(true);
+        const res = await updateUser({
+            id: user?.id as string,
+            fullName: `${data.firstName} ${data.lastName}`,
+            email: data.email,
+            avatar: data.avatar,
+        })
+
+        const employerRes = await updateEmployer({
+            id: user?.employer?.id as string,
+            companyName: data.companyName,
+            website: data.companyWebsite,
+            companyLogo: data.companyLogo,
+            companyDescription: data.companyDescription,
+        });
+
+        setSubmitting(false);
+        if (res.isSuccessful && employerRes.isSuccessful) {
+            toast({
+                security: 'success',
+                description: res.message
+            })
+            return;
+        }
+
+        toast({
+            security: 'error',
+            description: res.message
+        })        
+    }
     return (
-        <form className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
             <div className="background-light800_dark_gradient rounded-2xl space-y-6 p-8 md:p-12">
-                <div className="md:w-3/4 mx-auto mb-12">
-                    <UserAvatar
-                        name={"John Doe"}
-                        avatar={""}
-                        className="w-24 h-24"
-                    />
+                <div className="flex justify-center md:w-3/4 mx-auto mb-12">
+                    {!loading
+                        ? <UserAvatar
+                                name={`${data.firstName} ${data.lastName}`}
+                                avatar={data.avatar || ''}
+                                className="w-24 h-24"
+                            />
+                        : <Skeleton className="w-24 h-24 rounded-full" />
+                    }
+                    
                 </div>
                 <InputWrapper
                     labelFor="firstName"
@@ -61,7 +132,9 @@ export default function AdminProfile() {
                 >
                     <Input
                         id="firstName"
+                        value={data.firstName}
                         placeholder="First Name"
+                        onChange={handleChange}
                         required
                     />
                 </InputWrapper>
@@ -74,6 +147,8 @@ export default function AdminProfile() {
                     <Input
                         id="lastName"
                         placeholder="Last Name"
+                        value={data.lastName}
+                        onChange={handleChange}
                         required
                     />
                 </InputWrapper>
@@ -87,6 +162,8 @@ export default function AdminProfile() {
                         type="email"
                         id="email"
                         placeholder="Enter Email Address"
+                        value={data.email}
+                        onChange={handleChange}
                         required
                     />
                 </InputWrapper>
@@ -97,19 +174,22 @@ export default function AdminProfile() {
                     required
                     >
                     <div className="flex items-center gap-8">
-                        <UserAvatar
-                            name={`${data.firstName}`}
-                            avatar={data.avatar || ''}
-                            className="h-20 w-20 rounded-lg"
-                        />
-                        <Label htmlFor="profilePicker" className="flex-1 flex items-center justify-center gap-1 h-20 w-20 rounded-lg border border-color cursor-pointer px-3 hover:ring-2 hover:ring-slate-950 hover:ring-offset-2">
+                        {!loading
+                            ? <UserAvatar
+                                    name={`${data.firstName} ${data.lastName}`}
+                                    avatar={data.avatar || ''}
+                                    className="w-20 h-20 rounded-lg"
+                                />
+                            : <Skeleton className="w-20 h-20 rounded-lg" />
+                        }
+                        <Label htmlFor="avatar" className="flex-1 flex items-center justify-center gap-1 h-20 w-20 rounded-lg border border-color cursor-pointer px-3 hover:ring-2 hover:ring-slate-950 hover:ring-offset-2">
                             <strong className="underline">Click to upload</strong> <span className="text-muted">
                             or drag and drop.
                             </span>
                         </Label>
                         <Input
                             type="file"
-                            id="profilePicker"
+                            id="avatar"
                             accept="image/*"
                             className="hidden"
                             onChange={(e) => handleImageUpload(e)}
@@ -130,6 +210,8 @@ export default function AdminProfile() {
                     <Input
                         id="companyName"
                         placeholder="Company Name"
+                        value={data.companyName}
+                        onChange={handleChange}
                         required
                     />
                 </InputWrapper>
@@ -142,6 +224,8 @@ export default function AdminProfile() {
                     <Input
                         id="companyWebsite"
                         placeholder="Company Website"
+                        value={data.companyWebsite}
+                        onChange={handleChange}
                         required
                     />
                 </InputWrapper>
@@ -152,19 +236,22 @@ export default function AdminProfile() {
                     required
                 >
                     <div className="flex items-center gap-8">
-                        <UserAvatar
-                            name={`${data.companyName}`}
-                            avatar={data.companyLogo || ''}
-                            className="h-20 w-20 rounded-lg"
-                        />
-                        <Label htmlFor="logoPicker" className="flex-1 flex items-center justify-center gap-1 h-20 w-20 rounded-lg border border-color cursor-pointer px-3 hover:ring-2 hover:ring-slate-950 hover:ring-offset-2">
+                        {!loading
+                            ? <UserAvatar
+                                    name={`${data.companyName}`}
+                                    avatar={data.companyLogo || ''}
+                                    className="w-20 h-20 rounded-lg"
+                                />
+                            : <Skeleton className="w-20 h-20 rounded-lg" />
+                        }
+                        <Label htmlFor="companyLogo" className="flex-1 flex items-center justify-center gap-1 h-20 w-20 rounded-lg border border-color cursor-pointer px-3 hover:ring-2 hover:ring-slate-950 hover:ring-offset-2">
                             <strong className="underline">Click to upload</strong> <span className="text-muted">
                             or drag and drop.
                             </span>
                         </Label>
                         <Input
                             type="file"
-                            id="logoPicker"
+                            id="companyLogo"
                             accept="image/*"
                             className="hidden"
                             onChange={(e) => handleImageUpload(e)}
@@ -180,13 +267,14 @@ export default function AdminProfile() {
                 >
                     <div>
                         <Textarea
-                            id="summary"
+                            id="companyDescription"
                             placeholder="Write something interesting about the company's..."
                             value={data.companyDescription}
+                            onChange={handleChange}
                         />
-                        <span className="text-muted text-xs">
+                        <p className="text-muted text-xs mt-2 text-right">
                             {`${data.companyDescription.length}/500 characters remaining`}
-                        </span>
+                        </p>
                     </div>
                 </InputWrapper>
 
@@ -195,9 +283,12 @@ export default function AdminProfile() {
                 <Button
                     variant="secondary"
                     size="sm"
+                    className="flex items-center gap-4"
+                    disabled={submitting}
                     type="submit"
                 >
-                    Save Changes
+                    <span> Save Changes </span>
+                    {submitting && <Spinner size="sm" />}
                 </Button>
                 <Button
                     variant="ghost"

@@ -7,6 +7,7 @@ import JobDetailsActionButtons from "@/components/Jobs/JobDetailsAction";
 import { Job } from "@prisma/client";
 import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
 import { getUsersByKindeId } from "@/server/actions/user.action";
+import ApplicationForm from "@/components/forms/ApplicationForm";
 
 export default async function JobDetailsPage(props: PageURLProps) {
     const { id } = await props.params;
@@ -23,8 +24,8 @@ export default async function JobDetailsPage(props: PageURLProps) {
     };
 
     return (<div className="container md:grid grid-cols-[2fr_1fr] gap-8">
-        <div className="border-b md:border-b-0 md:border-r border-color">
-            <header className="px-4">
+        <div className="border rounded-lg border-color">
+            <header className="p-4">
                 <h1 className="h1-bold text-dark100_light900 mb-4">{jobDetails?.title as string}</h1>
                 <div>
                     <a
@@ -69,11 +70,26 @@ export default async function JobDetailsPage(props: PageURLProps) {
                 <div dangerouslySetInnerHTML={{ __html: removeDuplicateHTMLTags(jobDetails?.description as string) }} />
             </div>
         </div>
-        <div className="p-4">
-            <JobDetailsActionButtons
-                job={jobDetails as Job }
-                userId={user?.id as string}
+        <div className="py-4 border rounded-lg border-color">
+            {jobDetails.externalSourceUrl 
+                ? (<JobDetailsActionButtons
+                    job={jobDetails as Job}
+                    userId={user?.id as string}
+                />)
+                : (<>
+                    <Separator className="my-4" />
+                    <ApplicationForm
+                        job={jobDetails as Job}
+                        user={user}
+                    />
+                </>)
+            }
+            <Separator className="my-4" />
+            <ApplicationForm
+                job={jobDetails as Job}
+                user={user}
             />
+
         </div>
     </div>);    
 }
