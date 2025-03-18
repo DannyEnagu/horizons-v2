@@ -47,7 +47,7 @@ export default function JobDetailsActionButtons({ job, userId }:
     }
     return (<div className="flex flex-col gap-4 px-4">
         <p className="text-base bg-yellow-500/15 p-4 rounded-lg italic">
-            This job was posted from an external source. You will be redirected to the external source to apply.
+            Note: This job was posted from an external source. You will be redirected to the external source to apply.
         </p>
         <Button variant="secondary" className="w-full">
             <a

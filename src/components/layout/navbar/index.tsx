@@ -6,9 +6,9 @@ import ThemeSwitch from "./ThemeSwitch";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import MobileMenu from "./MobileMenu";
-import UserAvatar from "../UserAvatar";
+import UserAvatar from "../../shared/UserAvatar";
 
-import Logo from "../Logo";
+import Logo from "../../shared/Logo";
 import Menu from "./Menu";
 import useUser from "@/hooks/use-user";
 

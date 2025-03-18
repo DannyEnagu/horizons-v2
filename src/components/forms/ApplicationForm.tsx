@@ -1,6 +1,6 @@
 'use client';
 
-import { MouseEvent, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Job, User } from "@prisma/client";
 import { Textarea } from "../ui/textarea";

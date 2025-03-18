@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import Logo from "../Logo";
+import Logo from "../../shared/Logo";
 import Menu from "./Menu";
 import Link from "next/link";
 

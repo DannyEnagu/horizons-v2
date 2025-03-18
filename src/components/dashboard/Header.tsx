@@ -1,5 +1,5 @@
 import Image from "next/image";
-import ThemeSwitch from "../shared/navbar/ThemeSwitch";
+import ThemeSwitch from "../layout/navbar/ThemeSwitch";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import MobileSideMenu from "./nav/MobileSideMenu";
