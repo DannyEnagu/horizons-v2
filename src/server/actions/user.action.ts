@@ -3,18 +3,18 @@
 import prisma from "@/lib/prisma";
 import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
 import { DeleteUserType } from "@/types/user";
-import { User } from "@prisma/client";
+import { Employer, User } from "@prisma/client";
 
 
-export async function getUsersByKindeId (kindeId: string) {
+export async function getUsersByKindeId (kindeId: string | undefined) {
     try {
-        const users = await prisma.user.findFirst({
+        const user = await prisma.user.findFirst({
             where: {
                 kindeId
             }
         });
 
-        return users;
+        return user;
     } catch (error) {
         console.error(`❌ ${error} ❌`);
         throw error;
@@ -55,21 +55,22 @@ export async function getExistingUserOrCreateNewUser () {
     }
 };
 
-export async function updateUser (userData: Partial<User>) {
+export async function updateUser (user: {id: string} & Partial<User>) {
     try {
-        const user = await prisma.user.update({
+        const {id, ...rest} = user;
+        const userData = await prisma.user.update({
             where: {
-                id: userData.id
+                id: id
             },
             data: {
-                ...userData
+                ...rest
             },
         });
 
         return {
-            message: user ? "User updated successfully" : "Failed to update user",
-            isSuccessful: !!user,
-            result: user || null
+            message: userData ? "User updated successfully" : "Failed to update user",
+            isSuccessful: !!userData,
+            result: userData || null
         };
     } catch (error) {
         console.error(`❌ ${error} ❌`);
@@ -91,3 +92,23 @@ export async function deleteUser (userId: DeleteUserType) {
         throw error;
     }
 };
+
+export async function createEmployer (employerData: Omit<Employer, 'id'>) {
+    try {
+        const employer = await prisma.employer.create({
+            data: {
+                ...employerData
+            }
+        });
+
+        return {
+            message: employer ? "Employer created successfully" : "Failed to create employer",
+            isSuccessful: !!employer,
+            result: employer || null
+        };
+    } catch (error) {
+        console.error(`❌ ${error} ❌`);
+        throw error;
+    }
+};
+

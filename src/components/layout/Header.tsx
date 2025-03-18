@@ -1,0 +1,14 @@
+import React from 'react'
+import Navbar from './navbar'
+import Hero from './Hero'
+
+function Header() {
+  return (
+    <header>
+        <Navbar />
+        <Hero />
+    </header>
+  )
+}
+
+export default Header

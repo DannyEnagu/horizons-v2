@@ -21,6 +21,11 @@ export interface JobAPIResponse extends Job {
     contents: string;
     name: string;
     publication_date: string;
+    createdAt: string;
+    updatedAt: string;
+    employerId: string;
+    companyLogo: string;
+    descriptionType : string;
 }
 
 type SaveJobType = {

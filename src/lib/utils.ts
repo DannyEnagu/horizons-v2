@@ -79,3 +79,18 @@ export const parseHtmlString = (htmlString: string) => {
   // Remove 'Job Description:' from the string
   return limitString(cleanString.replace('Job Description:', ''), 150);
 }
+
+// Generate pagination information
+// This function takes in the length of the data and the current page number
+// It returns the total number of pages, the next page number and the previous page number
+export const generatePaginationInformation = (length: number, currentPage: number) => {
+  const totalPages = Math.ceil(length / 20);
+  const nextPage = currentPage < totalPages ? currentPage + 1 : null;
+  const prevPage = currentPage > 1 ? currentPage - 1 : null;
+
+  return {
+    totalPages,
+    nextPage,
+    prevPage,
+  };
+};

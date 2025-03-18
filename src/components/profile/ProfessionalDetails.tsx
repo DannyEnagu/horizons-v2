@@ -1,4 +1,5 @@
 import { Experience } from "@prisma/client";
+import Skills from "../shared/Skills";
 interface ProfessionalDetailsProps {
     experiences: Experience[] | undefined;
     skills: string[] | undefined;
@@ -44,16 +45,7 @@ export default function ProfessionalDetails(
                     Skills:
                 </strong>
                 {skills?.length === 0 && <span className="ml-2 text-xs">N/A</span>}
-                <span className="flex flex-wrap items-center gap-1 mt-3">
-                    {skills?.map((skill, index) => (
-                        <span
-                            key={index}
-                            className="flex items-center justify-center text-xs rounded-full border border-[#14A800] capitalize px-4 py-2 text-light400_light500"
-                        >
-                            {skill}
-                        </span>
-                    ))}
-                </span>
+                <Skills skills={skills} />
             </p>
         </div>
     );

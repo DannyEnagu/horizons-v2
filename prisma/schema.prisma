@@ -15,7 +15,7 @@ model User {
   avatar    String?  
   email     String   @unique  
   createdAt DateTime @default(now())  
-  updatedAt DateTime @updatedAt  
+  updatedAt DateTime @updatedAt 
   role      Role     @default(JOBSEEKER)  
 
   employer  Employer?  
@@ -28,14 +28,15 @@ enum Role {
 }  
 
 model Employer {  
-  id          String   @id @default(cuid()) 
-  companyName String  
-  website     String?
-  companyLogo String?
-  user        User     @relation(fields: [userId], references: [id])  
-  userId      String      @unique  
-  jobs        Job[]  
-}  
+  id                  String   @id @default(cuid()) 
+  companyName         String
+  companyDescription  String?
+  website             String?
+  companyLogo         String?
+  user                User     @relation(fields: [userId], references: [id])  
+  userId              String      @unique  
+  jobs                Job[]  
+}
 
 model JobSeeker {  
   id          String     @id @default(cuid())  
@@ -92,11 +93,12 @@ model Job {
   descriptionType String     @db.VarChar(5)  
   validUntil      DateTime?
   postedOn        DateTime?  
-  categories      String?  
+  categories      String?
   level           String?   
   externalSourceUrl String?
   employmentTypes String?
 }
+
 
 model Application {
   id          String  @id @default(cuid()) 
