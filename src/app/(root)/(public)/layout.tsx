@@ -3,14 +3,12 @@ import Footer from "@/components/layout/Footer";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <main className="relative pb-16">
+        <div className="relative flex flex-col">
             <Header />
-            <section>
-                <div className="mt-16 pt-12">
-                    {children}
-                </div>
-            </section>
+            <main className="flex-1 mt-16">
+                {children}
+            </main>
             <Footer />
-        </main>
+        </div>
     );
 }

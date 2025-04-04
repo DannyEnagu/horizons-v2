@@ -3,10 +3,11 @@ import Navbar from './navbar'
 import Hero from './Hero'
 
 function Header() {
+  
   return (
     <header>
-        <Navbar />
-        <Hero />
+      <Navbar />
+      <Hero />
     </header>
   )
 }

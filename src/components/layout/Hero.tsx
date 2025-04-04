@@ -2,14 +2,15 @@ import Image from 'next/image'
 
 function Hero() {
   return (
-    <section className="relative w-full mt-[73px] pt-8 px-6 md:px-12 lg:px-20 xl:px-32 flex flex-col lg:flex-row items-center justify-between min-h-[calc(100vh-73.09px)]">
+    <section className="container relative w-full mt-[73px] pt-8 px-6 md:px-12 lg:px-20 xl:px-32 flex flex-col-reverse lg:flex-row items-center justify-between min-h-[calc(100vh-200px)]">
       {/* Left Content */}
-      <div className="lg:w-1/2 text-center lg:text-left flex flex-col justify-center">
+      <div className="lg:w-1/2 text-center lg:text-left flex flex-col justify-center mt-10 lg:mt-0">
         <h1 className="text-3xl md:text-5xl font-bold leading-tight">
-          Find your perfect job in <br className="hidden md:block" /> the tech Industry
+          Find your perfect job <br className="hidden md:block" /> with us
+          <span className="text-green-600"> today!</span>
         </h1>
-        <p className="mt-4 text-gray-600 max-w-md mx-auto lg:mx-0">
-          Lorem ipsum dolor sit amet consectetur. Accumsan quis amet elementum est sed urna lectus dictum sagittis.
+        <p className="mt-4 text-light400_light500 max-w-md mx-auto lg:mx-0">
+          Discover thousands of job opportunities in various fields and industries. Let us help you take the next step in your career.
         </p>
         
         {/* Search Bar */}
@@ -22,16 +23,16 @@ function Hero() {
           <button className="bg-black text-white px-6 py-2 rounded-full">Search</button>
         </div>
         
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-light400_light500">
           <span className="font-semibold">Popular Search:</span> Software Developer, UI/UX Designer, Product Manager
         </p>
         
         {/* Trusted Companies */}
-        <TrustedCompanies />
+        <HiringCompanies />
       </div>
       
       {/* Right Content - 4 Circles with Images */}
-      <div className="relative w-[260px] h-[260px] md:w-[300px] md:h-[300px] lg:w-[340px] lg:h-[340px] mt-10 lg:mt-0 flex items-center justify-center">
+      <div className="relative w-[260px] h-[260px] md:w-[300px] md:h-[300px] lg:w-[340px] lg:h-[340px] flex items-center justify-center">
         <div className="absolute w-28 h-28 md:w-32 md:h-32 lg:w-36 lg:h-36 rounded-full overflow-hidden border border-gray-300 shadow-md top-0 left-1/2 transform -translate-x-1/2">
           <Image src="/job1.png" alt="Job Image 1" layout="fill" objectFit="cover" />
         </div>
@@ -49,10 +50,12 @@ function Hero() {
   )
 }
 
-const TrustedCompanies = () => {
+const HiringCompanies = () => {
     return (
-      <div className="mt-6">
-        <p className="text-gray-600 font-semibold">Trusted by 5k+ companies</p>
+      <div className="hidden md:block mt-20">
+        <p className="text-light400_light500 font-semibold text-xl">
+          Top Hiring Companies
+        </p>
         <div className="flex items-center space-x-6 mt-2">
           <Image src="/meta.png" alt="Meta" width={50} height={50} />
           <Image src="/slack.png" alt="Slack" width={50} height={50} />
